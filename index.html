@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VDS Web Components - Demo</title>
+    <link rel="stylesheet" href="./tokens/tokens.css" />
+    <style>
+      body {
+        font-family: var(--vds-font-family-sans);
+        padding: var(--vds-spacing-xl);
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+      section {
+        margin-bottom: var(--vds-spacing-2xl);
+      }
+      h1 {
+        color: var(--vds-color-text-primary);
+      }
+      h2 {
+        color: var(--vds-color-text-primary);
+        margin-top: var(--vds-spacing-xl);
+      }
+    </style>
+  </head>
+  <body>
+    <h1>VDS Web Components Demo</h1>
+
+    <section>
+      <h2>Buttons</h2>
+      <vds-button>Primary</vds-button>
+      <vds-button variant="secondary">Secondary</vds-button>
+      <vds-button variant="success">Success</vds-button>
+      <vds-button variant="danger">Danger</vds-button>
+      <vds-button variant="warning">Warning</vds-button>
+      <vds-button variant="info">Info</vds-button>
+      <vds-button variant="outline">Outline</vds-button>
+      <vds-button variant="ghost">Ghost</vds-button>
+    </section>
+
+    <section>
+      <h2>Button Sizes</h2>
+      <vds-button size="sm">Small</vds-button>
+      <vds-button size="md">Medium</vds-button>
+      <vds-button size="lg">Large</vds-button>
+    </section>
+
+    <section>
+      <h2>Inputs</h2>
+      <vds-input label="Email" type="email" placeholder="Enter your email"></vds-input>
+      <vds-input label="Password" type="password" placeholder="Enter your password"></vds-input>
+      <vds-input label="Required Field" required></vds-input>
+      <vds-input label="With Helper Text" helper-text="This is helper text"></vds-input>
+      <vds-input label="With Error" error-message="This field has an error"></vds-input>
+    </section>
+
+    <section>
+      <h2>Modal</h2>
+      <vds-button id="open-modal">Open Modal</vds-button>
+      <vds-modal id="demo-modal" title="Demo Modal">
+        <p>This is a demo modal with some content.</p>
+        <div slot="footer">
+          <vds-button variant="secondary" id="close-modal">Close</vds-button>
+          <vds-button variant="primary">Confirm</vds-button>
+        </div>
+      </vds-modal>
+    </section>
+
+    <script type="module" src="./dev.ts"></script>
+    <script type="module">
+
+      document.getElementById('open-modal')?.addEventListener('vds-button-click', () => {
+        const modal = document.getElementById('demo-modal');
+        if (modal) {
+          modal.showModal();
+        }
+      });
+
+      document.getElementById('close-modal')?.addEventListener('vds-button-click', () => {
+        const modal = document.getElementById('demo-modal');
+        if (modal) {
+          modal.close();
+        }
+      });
+    </script>
+  </body>
+</html>
+

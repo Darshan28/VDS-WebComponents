@@ -1,0 +1,15 @@
+{
+  "name": "@vds/docs",
+  "version": "1.0.0",
+  "description": "VDS Web Components Documentation",
+  "type": "module",
+  "scripts": {
+    "dev": "vitepress dev",
+    "build": "vitepress build",
+    "preview": "vitepress preview"
+  },
+  "devDependencies": {
+    "vitepress": "^1.0.0"
+  }
+}
+

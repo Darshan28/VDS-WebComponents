@@ -1,0 +1,12 @@
+/* Custom styles for VDS documentation */
+
+/* Import tokens */
+@import '../../../tokens/tokens.css';
+
+/* Component styles */
+vds-button,
+vds-input,
+vds-modal {
+  display: inline-block;
+}
+

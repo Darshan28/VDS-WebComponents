@@ -1,0 +1,90 @@
+{
+  "name": "@vds/web-components",
+  "version": "0.0.0-semantic-release",
+  "description": "VDS Web Components Library - Framework-agnostic UI components",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./tokens": {
+      "import": "./tokens/tokens.css"
+    },
+    "./button": {
+      "import": "./packages/vds-button/dist/vds-button.js",
+      "types": "./packages/vds-button/dist/vds-button.d.ts"
+    },
+    "./input": {
+      "import": "./packages/vds-input/dist/vds-input.js",
+      "types": "./packages/vds-input/dist/vds-input.d.ts"
+    },
+    "./modal": {
+      "import": "./packages/vds-modal/dist/vds-modal.js",
+      "types": "./packages/vds-modal/dist/vds-modal.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "packages",
+    "tokens"
+  ],
+  "scripts": {
+    "build": "npm run build:packages && npm run build:index",
+    "build:packages": "npm run build --workspaces --if-present",
+    "build:index": "vite build --config vite.index.config.ts",
+    "dev": "vite",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "test:a11y": "vitest run --config vitest.a11y.config.ts",
+    "lint": "eslint . --ext .ts,.tsx",
+    "typecheck": "tsc --noEmit",
+    "docs:dev": "cd docs-site && npm run dev",
+    "docs:build": "cd docs-site && npm run build",
+    "release": "semantic-release",
+    "create-component": "node scripts/create-component.js"
+  },
+  "keywords": [
+    "web-components",
+    "custom-elements",
+    "lit",
+    "typescript",
+    "ui-components"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@axe-core/playwright": "^4.9.0",
+    "@open-wc/testing": "^3.1.7",
+    "@playwright/test": "^1.41.0",
+    "@rollup/plugin-typescript": "^11.1.6",
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^9.2.6",
+    "@semantic-release/npm": "^11.0.2",
+    "@types/node": "^20.11.0",
+    "@typescript-eslint/eslint-plugin": "^6.19.0",
+    "@typescript-eslint/parser": "^6.19.0",
+    "@vitest/ui": "^1.2.0",
+    "axe-core": "^4.9.0",
+    "eslint": "^8.56.0",
+    "happy-dom": "^12.10.3",
+    "lit": "^3.1.0",
+    "playwright": "^1.41.0",
+    "rollup": "^4.9.0",
+    "semantic-release": "^22.0.12",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.11",
+    "vitest": "^1.2.0",
+    "vitepress": "^1.0.0"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-org/vds-web-components.git"
+  }
+}
+

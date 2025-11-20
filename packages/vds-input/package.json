@@ -1,0 +1,33 @@
+{
+  "name": "@vds/input",
+  "version": "0.0.0-semantic-release",
+  "description": "VDS Input Web Component",
+  "type": "module",
+  "main": "./dist/vds-input.js",
+  "types": "./dist/vds-input.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/vds-input.js",
+      "types": "./dist/vds-input.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "vite build",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "lit": "^3.1.0"
+  },
+  "devDependencies": {
+    "@open-wc/testing": "^3.1.7",
+    "@types/node": "^20.11.0",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.11",
+    "vitest": "^1.2.0"
+  }
+}
+
