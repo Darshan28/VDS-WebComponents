@@ -27,6 +27,20 @@ const components = ref([
     preview: '<vds-button>Click me</vds-button>'
   },
   {
+    name: 'badge',
+    title: 'Badge',
+    description: 'Badge component for labels, tags, and status indicators',
+    link: '/components/badge',
+    preview: '<vds-badge>New</vds-badge>'
+  },
+  {
+    name: 'icon',
+    title: 'Icon',
+    description: 'Icon font component with sizing, color, and accessibility controls',
+    link: '/components/icon',
+    preview: '<vds-icon name="check" label="Success"></vds-icon>'
+  },
+  {
     name: 'input',
     title: 'Input',
     description: 'Form input component with validation and helper text',

@@ -22,6 +22,14 @@
     "./modal": {
       "import": "./packages/vds-modal/dist/vds-modal.js",
       "types": "./packages/vds-modal/dist/vds-modal.d.ts"
+    },
+    "./icon": {
+      "import": "./packages/vds-icon/dist/vds-icon.js",
+      "types": "./packages/vds-icon/dist/vds-icon.d.ts"
+    },
+    "./badge": {
+      "import": "./packages/vds-badge/dist/vds-badge.js",
+      "types": "./packages/vds-badge/dist/vds-badge.d.ts"
     }
   },
   "files": [

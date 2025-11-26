@@ -48,7 +48,9 @@ export default defineConfig({
           text: 'Components',
           items: [
             { text: 'Overview', link: '/components/' },
+            { text: 'Icon', link: '/components/icon' },
             { text: 'Button', link: '/components/button' },
+            { text: 'Badge', link: '/components/badge' },
             { text: 'Input', link: '/components/input' },
             { text: 'Modal', link: '/components/modal' }
           ]
