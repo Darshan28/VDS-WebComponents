@@ -3,10 +3,60 @@
 /* Import tokens */
 @import '../../../tokens/tokens.css';
 
+/* Icon font face declaration */
+@font-face {
+  font-family: 'vds';
+  src: url('../../../packages/vds-icon/assets/fonts/vds.eot?zftt44');
+  src: url('../../../packages/vds-icon/assets/fonts/vds.eot?zftt44#iefix') format('embedded-opentype'),
+    url('../../../packages/vds-icon/assets/fonts/vds.ttf?zftt44') format('truetype'),
+    url('../../../packages/vds-icon/assets/fonts/vds.woff?zftt44') format('woff'),
+    url('../../../packages/vds-icon/assets/fonts/vds.svg?zftt44#vds') format('svg');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+/* Import icon font CSS for docs previews (without @font-face) */
+@import '../../../packages/vds-icon/assets/style.css';
+
 /* Component styles */
-vds-button,
+/* vds-button,
 vds-input,
 vds-modal {
   display: inline-block;
+} */
+
+/* html {
+  font-size: 12px;
+} */
+
+
+body{
+  font-family: var(--vds-font-family-sans) !important;
 }
 
+
+/* Large (992px–1279px) */
+@media (min-width: 992px) and (max-width: 1279px) {
+  html { font-size: 12px; }
+}
+
+/* X-Large (1280px–1399px) */
+@media (min-width: 1280px) and (max-width: 1399px) {
+  html { font-size: 13px; }
+}
+
+/* XX-Large (1400px–1599px) */
+@media (min-width: 1400px) and (max-width: 1599px) {
+  html { font-size: 14px; }
+}
+
+/* 1600–1999px */
+@media (min-width: 1600px) and (max-width: 1999px) {
+  html { font-size: 16px; }
+}
+
+/* 2000px and above */
+@media (min-width: 2000px) {
+  html { font-size: 18px; }
+}

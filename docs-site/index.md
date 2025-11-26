@@ -73,6 +73,7 @@ export class AppComponent {}
 ## Components
 
 - [Button](/components/button) - Interactive button component
+- [Icon](/components/icon) - Font-based icon component with theming support
 - [Input](/components/input) - Form input component
 - [Modal](/components/modal) - Modal dialog component
 

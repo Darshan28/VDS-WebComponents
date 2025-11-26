@@ -1,9 +1,10 @@
 import { LitElement, html, css, nothing } from 'lit';
 import { customElement, property, query } from 'lit/decorators.js';
-import { classMap } from 'lit/directives/class-map.js';
 
-export type ButtonVariant = 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' | 'outline' | 'ghost';
+export type ButtonVariant = 'primary' | 'secondary' | 'warning' | 'danger' | 'info';
 export type ButtonSize = 'sm' | 'md' | 'lg';
+export type ButtonAppearance = 'filled' | 'outline' | 'text';
+export type ButtonShape = 'rounded' | 'pill' | 'sharp';
 
 export interface ButtonClickEventDetail {
   originalEvent: MouseEvent;
@@ -18,188 +19,201 @@ export interface ButtonClickEventDetail {
  * 
  * @csspart button - The button element
  * @csspart label - The label/text content
- * @csspart icon - The icon slot container
+ * @csspart prefix-icon - The leading icon slot
+ * @csspart icon - Alias for the deprecated single icon slot (leading)
+ * @csspart suffix-icon - The trailing icon slot
  */
 @customElement('vds-button')
 export class VDSButton extends LitElement {
   static styles = css`
     :host {
       display: inline-block;
-      --vds-btn-padding-x-sm: var(--vds-spacing-sm, 0.5rem);
-      --vds-btn-padding-y-sm: var(--vds-spacing-xs, 0.25rem);
-      --vds-btn-padding-x-md: var(--vds-spacing-md, 1rem);
-      --vds-btn-padding-y-md: var(--vds-spacing-sm, 0.5rem);
-      --vds-btn-padding-x-lg: var(--vds-spacing-lg, 1.5rem);
-      --vds-btn-padding-y-lg: var(--vds-spacing-md, 1rem);
-      
-      --vds-btn-font-size-sm: var(--vds-font-size-sm, 0.875rem);
-      --vds-btn-font-size-md: var(--vds-font-size-md, 1rem);
-      --vds-btn-font-size-lg: var(--vds-font-size-lg, 1.125rem);
-      
-      --vds-btn-bg-primary: var(--vds-color-primary, #0066cc);
-      --vds-btn-bg-primary-hover: var(--vds-color-primary-hover, #0052a3);
-      --vds-btn-bg-secondary: var(--vds-color-secondary, #6c757d);
-      --vds-btn-bg-secondary-hover: var(--vds-color-secondary-hover, #5a6268);
-      --vds-btn-bg-success: var(--vds-color-success, #28a745);
-      --vds-btn-bg-success-hover: var(--vds-color-success-hover, #218838);
-      --vds-btn-bg-danger: var(--vds-color-danger, #dc3545);
-      --vds-btn-bg-danger-hover: var(--vds-color-danger-hover, #c82333);
-      --vds-btn-bg-warning: var(--vds-color-warning, #ffc107);
-      --vds-btn-bg-warning-hover: var(--vds-color-warning-hover, #e0a800);
-      --vds-btn-bg-info: var(--vds-color-info, #17a2b8);
-      --vds-btn-bg-info-hover: var(--vds-color-info-hover, #138496);
-      
-      --vds-btn-color-primary: var(--vds-color-white, #ffffff);
-      --vds-btn-color-secondary: var(--vds-color-white, #ffffff);
-      --vds-btn-color-success: var(--vds-color-white, #ffffff);
-      --vds-btn-color-danger: var(--vds-color-white, #ffffff);
-      --vds-btn-color-warning: var(--vds-color-text-primary, #1f2937);
-      --vds-btn-color-info: var(--vds-color-white, #ffffff);
-      
-      --vds-btn-border-radius: var(--vds-radius-md, 0.375rem);
+      --vds-btn-font-family: var(--vds-font-family-sans, 'Nunito Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif);
+      --vds-btn-font-weight: var(--vds-font-weight-normal, 400);
+      --vds-btn-font-size: var(--vds-font-size-md, 1rem);
+      --vds-btn-padding-x: var(--vds-spacing-md, 1rem);
+      --vds-btn-padding-y: var(--vds-spacing-sm, 0.5rem);
+      --vds-btn-gap: var(--vds-spacing-sm, 0.5rem);
+      --vds-btn-min-height: 28px;
+      --vds-btn-radius: var(--vds-radius-lg, 0.5rem);
+      --vds-btn-accent: var(--vds-color-brand, #00b578);
+      --vds-btn-accent-hover: var(--vds-color-brand-hover, #009d68);
+      --vds-btn-accent-active: var(--vds-color-brand-active, #007a51);
+      --vds-btn-on-accent: var(--vds-color-white, #ffffff);
+      --vds-btn-border-color: var(--vds-color-border-success, var(--vds-color-brand, #00b578));
+      --vds-btn-muted-bg: var(--vds-color-green-100, #e6f9f3);
+      --vds-btn-muted-bg-strong: var(--vds-color-green-200, #b3efd9);
+      --vds-btn-focus-ring: var(--vds-color-blue-500, #4366ff);
+      --vds-btn-label-color: var(--vds-btn-on-accent);
+      --vds-btn-disabled-bg: var(--vds-color-gray-200, #f8f9fb);
+      --vds-btn-disabled-color: var(--vds-color-slate-500, #90a0b9);
+      --vds-btn-disabled-border: var(--vds-color-gray-300, #eaeef4);
       --vds-btn-transition: var(--vds-transition-base, 200ms ease-in-out);
+    }
+
+    :host([size='sm']) {
+      --vds-btn-font-size: var(--vds-font-size-sm, 0.875rem);
+      --vds-btn-padding-x: var(--vds-spacing-sm, 0.5rem);
+      --vds-btn-padding-y: var(--vds-spacing-xs, 0.25rem);
+      --vds-btn-gap: var(--vds-spacing-xs, 0.25rem);
+      --vds-btn-min-height: 20px;
+    }
+
+    :host([size='lg']) {
+      --vds-btn-font-size: var(--vds-font-size-lg, 1.125rem);
+      --vds-btn-padding-x: var(--vds-spacing-lg, 1.5rem);
+      --vds-btn-padding-y: var(--vds-spacing-md, 1rem);
+      --vds-btn-gap: var(--vds-spacing-sm, 0.5rem);
+      --vds-btn-min-height: 30px;
+      --vds-btn-font-weight: var(--vds-font-weight-semibold, 600);
+    }
+
+    :host([shape='rounded']) {
+      --vds-btn-radius: var(--vds-radius-lg, 0.5rem);
+    }
+
+    :host([shape='pill']) {
+      --vds-btn-radius: var(--vds-radius-full, 9999px);
+    }
+
+    :host([shape='sharp']) {
+      --vds-btn-radius: var(--vds-radius-none, 0);
+    }
+
+    :host([variant='secondary']) {
+      --vds-btn-accent: var(--vds-color-gray-200, #f8f9fb);
+      --vds-btn-accent-hover: var(--vds-color-gray-300, #eaeef4);
+      --vds-btn-accent-active: var(--vds-color-gray-400, #cdced3);
+      --vds-btn-on-accent: var(--vds-color-black, var(--vds-color-text-primary, #070922));
+      --vds-btn-border-color: var(--vds-color-gray-300, #eaeef4);
+      --vds-btn-muted-bg: var(--vds-color-gray-200, #f8f9fb);
+      --vds-btn-muted-bg-strong: var(--vds-color-gray-300, #eaeef4);
+    }
+
+    :host([variant='warning']) {
+      --vds-btn-accent: var(--vds-color-orange-500, #ff6800);
+      --vds-btn-accent-hover: var(--vds-color-orange-600, #f54800);
+      --vds-btn-accent-active: var(--vds-color-orange-700, #ca3500);
+      --vds-btn-border-color: var(--vds-color-border-warning, var(--vds-color-orange-500, #ff6800));
+      --vds-btn-muted-bg: var(--vds-color-orange-100, #ffecd4);
+      --vds-btn-muted-bg-strong: var(--vds-color-orange-200, #ffd6a7);
+    }
+
+    :host([variant='danger']) {
+      --vds-btn-accent: var(--vds-color-red-500, #fb3145);
+      --vds-btn-accent-hover: var(--vds-color-red-600, #e02033);
+      --vds-btn-accent-active: var(--vds-color-red-700, #b51626);
+      --vds-btn-border-color: var(--vds-color-border-error, var(--vds-color-red-500, #fb3145));
+      --vds-btn-muted-bg: var(--vds-color-red-100, #ffecee);
+      --vds-btn-muted-bg-strong: var(--vds-color-red-200, #ffc8cc);
+    }
+
+    :host([variant='info']) {
+      --vds-btn-accent: var(--vds-color-blue-500, #4366ff);
+      --vds-btn-accent-hover: var(--vds-color-blue-600, #2e4ddb);
+      --vds-btn-accent-active: var(--vds-color-blue-700, #233ab0);
+      --vds-btn-border-color: var(--vds-color-blue-500, #4366ff);
+      --vds-btn-muted-bg: var(--vds-color-blue-100, #eef2ff);
+      --vds-btn-muted-bg-strong: var(--vds-color-blue-200, #c7d2fe);
     }
 
     button {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: var(--vds-spacing-xs, 0.25rem);
-      font-family: var(--vds-font-family-sans, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif);
-      font-weight: var(--vds-font-weight-medium, 500);
-      line-height: var(--vds-line-height-normal, 1.5);
-      text-align: center;
-      text-decoration: none;
-      vertical-align: middle;
-      cursor: pointer;
-      user-select: none;
+      gap: var(--vds-btn-gap);
+      min-height: var(--vds-btn-min-height);
+      padding: var(--vds-btn-padding-y) var(--vds-btn-padding-x);
+      border-radius: var(--vds-btn-radius);
+      font-family: var(--vds-btn-font-family);
+      font-weight: var(--vds-btn-font-weight);
+      font-size: var(--vds-btn-font-size);
+      line-height: 1;
+      letter-spacing: 0.01em;
+      background-color: transparent;
       border: 1px solid transparent;
-      border-radius: var(--vds-btn-border-radius);
-      transition: all var(--vds-btn-transition);
+      color: var(--vds-btn-label-color);
+      cursor: pointer;
+      transition: background-color var(--vds-btn-transition), border-color var(--vds-btn-transition), color var(--vds-btn-transition), box-shadow var(--vds-btn-transition);
+      text-decoration: none;
       white-space: nowrap;
       box-sizing: border-box;
     }
 
     button:focus-visible {
-      outline: 2px solid var(--vds-color-border-focus, #0066cc);
+      outline: 2px solid var(--vds-btn-focus-ring);
       outline-offset: 2px;
     }
 
     button:disabled,
-    button[disabled] {
-      opacity: 0.6;
+    button[disabled],
+    :host([disabled]) button {
+      background-color: var(--vds-btn-disabled-bg);
+      border-color: var(--vds-btn-disabled-border);
+      color: var(--vds-btn-disabled-color);
       cursor: not-allowed;
-      pointer-events: none;
+      opacity: 0.8;
     }
 
-    /* Size Variants */
-    button.size-sm {
-      padding: var(--vds-btn-padding-y-sm) var(--vds-btn-padding-x-sm);
-      font-size: var(--vds-btn-font-size-sm);
+    :host([appearance='filled']) button {
+      background-color: var(--vds-btn-accent);
+      border-color: var(--vds-btn-border-color, var(--vds-btn-accent));
+      color: var(--vds-btn-on-accent);
     }
 
-    button.size-md {
-      padding: var(--vds-btn-padding-y-md) var(--vds-btn-padding-x-md);
-      font-size: var(--vds-btn-font-size-md);
+    :host([appearance='filled']) button:hover:not(:disabled) {
+      background-color: var(--vds-btn-accent-hover);
+      border-color: var(--vds-btn-accent-hover);
     }
 
-    button.size-lg {
-      padding: var(--vds-btn-padding-y-lg) var(--vds-btn-padding-x-lg);
-      font-size: var(--vds-btn-font-size-lg);
+    :host([appearance='filled']) button:active:not(:disabled) {
+      background-color: var(--vds-btn-accent-active);
+      border-color: var(--vds-btn-accent-active);
     }
 
-    /* Variant Styles */
-    button.variant-primary {
-      background-color: var(--vds-btn-bg-primary);
-      color: var(--vds-btn-color-primary);
-      border-color: var(--vds-btn-bg-primary);
+    :host([appearance='outline']) {
+      --vds-btn-label-color: var(--vds-btn-accent);
     }
 
-    button.variant-primary:hover:not(:disabled) {
-      background-color: var(--vds-btn-bg-primary-hover);
-      border-color: var(--vds-btn-bg-primary-hover);
-    }
-
-    button.variant-secondary {
-      background-color: var(--vds-btn-bg-secondary);
-      color: var(--vds-btn-color-secondary);
-      border-color: var(--vds-btn-bg-secondary);
-    }
-
-    button.variant-secondary:hover:not(:disabled) {
-      background-color: var(--vds-btn-bg-secondary-hover);
-      border-color: var(--vds-btn-bg-secondary-hover);
-    }
-
-    button.variant-success {
-      background-color: var(--vds-btn-bg-success);
-      color: var(--vds-btn-color-success);
-      border-color: var(--vds-btn-bg-success);
-    }
-
-    button.variant-success:hover:not(:disabled) {
-      background-color: var(--vds-btn-bg-success-hover);
-      border-color: var(--vds-btn-bg-success-hover);
-    }
-
-    button.variant-danger {
-      background-color: var(--vds-btn-bg-danger);
-      color: var(--vds-btn-color-danger);
-      border-color: var(--vds-btn-bg-danger);
-    }
-
-    button.variant-danger:hover:not(:disabled) {
-      background-color: var(--vds-btn-bg-danger-hover);
-      border-color: var(--vds-btn-bg-danger-hover);
-    }
-
-    button.variant-warning {
-      background-color: var(--vds-btn-bg-warning);
-      color: var(--vds-btn-color-warning);
-      border-color: var(--vds-btn-bg-warning);
-    }
-
-    button.variant-warning:hover:not(:disabled) {
-      background-color: var(--vds-btn-bg-warning-hover);
-      border-color: var(--vds-btn-bg-warning-hover);
-    }
-
-    button.variant-info {
-      background-color: var(--vds-btn-bg-info);
-      color: var(--vds-btn-color-info);
-      border-color: var(--vds-btn-bg-info);
-    }
-
-    button.variant-info:hover:not(:disabled) {
-      background-color: var(--vds-btn-bg-info-hover);
-      border-color: var(--vds-btn-bg-info-hover);
-    }
-
-    button.variant-outline {
+    :host([appearance='outline']) button {
       background-color: transparent;
-      color: var(--vds-btn-bg-primary);
-      border-color: var(--vds-btn-bg-primary);
+      border-color: var(--vds-btn-border-color, var(--vds-btn-accent));
+      color: var(--vds-btn-accent);
     }
 
-    button.variant-outline:hover:not(:disabled) {
-      background-color: var(--vds-btn-bg-primary);
-      color: var(--vds-btn-color-primary);
+    :host([appearance='outline']) button:hover:not(:disabled) {
+      background-color: var(--vds-btn-muted-bg);
     }
 
-    button.variant-ghost {
+    :host([appearance='outline']) button:active:not(:disabled) {
+      background-color: var(--vds-btn-muted-bg-strong);
+    }
+
+    :host([appearance='text']) {
+      --vds-btn-label-color: var(--vds-btn-accent);
+    }
+
+    :host([appearance='text']) button {
       background-color: transparent;
-      color: var(--vds-btn-bg-primary);
       border-color: transparent;
+      color: var(--vds-btn-accent);
     }
 
-    button.variant-ghost:hover:not(:disabled) {
-      background-color: var(--vds-color-gray-100, #f3f4f6);
+    :host([appearance='text']) button:hover:not(:disabled) {
+      background-color: var(--vds-btn-muted-bg);
     }
 
-    /* Icon Slot */
-    ::slotted([slot="icon"]) {
+    :host([appearance='text']) button:active:not(:disabled) {
+      background-color: var(--vds-btn-muted-bg-strong);
+    }
+
+    ::slotted([slot='prefix-icon']),
+    ::slotted([slot='suffix-icon']),
+    ::slotted([slot='icon']) {
       display: inline-flex;
       align-items: center;
+      line-height: 1;
+      color: inherit;
     }
   `;
 
@@ -208,6 +222,12 @@ export class VDSButton extends LitElement {
 
   @property({ type: String, reflect: true })
   accessor size: ButtonSize = 'md';
+
+  @property({ type: String, reflect: true })
+  accessor appearance: ButtonAppearance = 'filled';
+
+  @property({ type: String, reflect: true })
+  accessor shape: ButtonShape = 'rounded';
 
   @property({ type: Boolean, reflect: true })
   accessor disabled = false;
@@ -250,27 +270,23 @@ export class VDSButton extends LitElement {
   }
 
   render() {
-    const classes = {
-      [`variant-${this.variant}`]: true,
-      [`size-${this.size}`]: true
-    };
-
     return html`
       <button
         part="button"
         type=${this.type}
         ?disabled=${this.disabled}
-        class=${classMap(classes)}
         aria-label=${this.ariaLabel || nothing}
         @click=${this.handleClick}
         @keydown=${this.handleKeyDown}
         role="button"
         tabindex=${this.disabled ? -1 : 0}
       >
+        <slot name="prefix-icon" part="prefix-icon"></slot>
         <slot name="icon" part="icon"></slot>
         <span part="label">
           <slot></slot>
         </span>
+        <slot name="suffix-icon" part="suffix-icon"></slot>
       </button>
     `;
   }

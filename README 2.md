@@ -37,8 +37,17 @@ npm install @vds/web-components
 ## Components
 
 - **vds-button** - Interactive button component with multiple variants
+- **vds-icon** - Font-based icon component with sizing, color, and accessibility controls
 - **vds-input** - Form input component with validation
 - **vds-modal** - Modal dialog with focus trapping
+
+### Icon font setup
+
+`vds-icon` wraps the CSS that IcoMoon generates. Make sure you include the exported `style.css` (and the matching `fonts/` directory) somewhere in your app so classes like `v-download` resolve to real glyphs. During local development you can import the file directly:
+
+```css
+@import './packages/vds-icon/assets/style.css';
+```
 
 ## Documentation
 
