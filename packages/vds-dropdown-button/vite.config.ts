@@ -4,13 +4,13 @@ import { resolve } from 'path';
 export default defineConfig({
   build: {
     lib: {
-      entry: resolve(__dirname, 'vds-input.ts'),
-      name: 'VDSInput',
-      fileName: 'vds-input',
+      entry: resolve(__dirname, 'vds-dropdown-button.ts'),
+      name: 'VDSDropdownButton',
+      fileName: 'vds-dropdown-button',
       formats: ['es']
     },
     rollupOptions: {
-      external: ['lit', '../vds-dropdown-button/vds-dropdown-button.js', '../vds-icon/vds-icon.js'],
+      external: ['lit', '../vds-icon/vds-icon.js'],
       output: {
         globals: {
           lit: 'lit'

@@ -98,7 +98,7 @@ function renderPreview() {
     
     // Force upgrade of any custom elements
     // This ensures web components are properly initialized
-    const components = previewContainer.value.querySelectorAll('vds-button, vds-input, vds-modal');
+    const components = previewContainer.value.querySelectorAll('vds-button, vds-input, vds-modal, vds-dropdown-button, vds-dropdown-menu, vds-menu-item, vds-checkbox, vds-icon, vds-avatar, vds-badge');
     components.forEach((el) => {
       // Check if element is already defined and upgrade it
       if (el.constructor === HTMLElement) {
@@ -114,6 +114,33 @@ function renderPreview() {
           el.parentNode?.replaceChild(newEl, el);
         }
       }
+    });
+    
+    // Wait for all custom elements to be defined and upgraded
+    Promise.all([
+      customElements.whenDefined('vds-dropdown-button').catch(() => Promise.resolve()),
+      customElements.whenDefined('vds-dropdown-menu').catch(() => Promise.resolve()),
+      customElements.whenDefined('vds-menu-item').catch(() => Promise.resolve()),
+      customElements.whenDefined('vds-checkbox').catch(() => Promise.resolve()),
+      customElements.whenDefined('vds-icon').catch(() => Promise.resolve()),
+      customElements.whenDefined('vds-avatar').catch(() => Promise.resolve())
+    ]).then(() => {
+      // Force update all dropdown menus and menu items after they're upgraded
+      requestAnimationFrame(() => {
+        const dropdownMenus = previewContainer.value?.querySelectorAll('vds-dropdown-menu');
+        dropdownMenus?.forEach((menu: any) => {
+          if (menu.requestUpdate) {
+            menu.requestUpdate();
+          }
+        });
+        
+        const menuItems = previewContainer.value?.querySelectorAll('vds-menu-item');
+        menuItems?.forEach((item: any) => {
+          if (item.requestUpdate) {
+            item.requestUpdate();
+          }
+        });
+      });
     });
     
     // Ensure modals are closed by default and don't block interaction
@@ -259,6 +286,143 @@ function renderPreview() {
       });
     };
     
+    // Set up dropdown button listeners
+    const attachDropdownButtonListeners = () => {
+      if (!previewContainer.value) return;
+      
+      // Find all dropdown buttons and their associated menus
+      const dropdownButtons = previewContainer.value.querySelectorAll('vds-dropdown-button');
+      
+      dropdownButtons.forEach((button) => {
+        const buttonId = button.getAttribute('id');
+        
+        // Try to find associated menu by ID pattern or by proximity
+        let menu: HTMLElement | null = null;
+        
+        if (buttonId) {
+          // Try pattern: dropdown-btn-example -> dropdown-menu-example
+          const menuId = buttonId.replace('dropdown-btn', 'dropdown-menu');
+          menu = previewContainer.value.querySelector(`#${menuId}`) as HTMLElement;
+        }
+        
+        // If not found by ID, find the next sibling dropdown-menu
+        if (!menu) {
+          let current: Element | null = button.nextElementSibling;
+          while (current) {
+            if (current.tagName === 'VDS-DROPDOWN-MENU') {
+              menu = current as HTMLElement;
+              break;
+            }
+            current = current.nextElementSibling;
+          }
+        }
+        
+        // If still not found, find within the same parent
+        if (!menu && button.parentElement) {
+          menu = button.parentElement.querySelector('vds-dropdown-menu') as HTMLElement;
+        }
+        
+        if (menu) {
+          // Remove existing handler if any
+          const existingHandler = (button as any)._dropdownButtonHandler;
+          if (existingHandler) {
+            button.removeEventListener('vds-dropdown-button-click', existingHandler, true);
+          }
+          
+          const toggleMenu = (e: Event) => {
+            e.stopPropagation();
+            const isVisible = menu.style.display !== 'none' && menu.style.display !== '';
+            menu.style.display = isVisible ? 'none' : 'block';
+          };
+          
+          const handler = (e: CustomEvent) => {
+            if (e.detail && e.detail.part === 'dropdown') {
+              toggleMenu(e);
+            }
+          };
+          
+          (button as any)._dropdownButtonHandler = handler;
+          button.addEventListener('vds-dropdown-button-click', handler as EventListener, true);
+        }
+      });
+      
+      // Set up a single document-level click handler for closing dropdown menus
+      // Only close menus that are associated with dropdown buttons and are currently visible
+      if (!(window as any).__vdsDropdownMenuCloseHandler) {
+        (window as any).__vdsDropdownMenuCloseHandler = (e: MouseEvent) => {
+          const target = e.target as HTMLElement;
+          const allContainers = document.querySelectorAll('.preview-container');
+          
+          for (const container of allContainers) {
+            const dropdownButtons = container.querySelectorAll('vds-dropdown-button');
+            const dropdownMenus = container.querySelectorAll('vds-dropdown-menu');
+            
+            // Create a map of dropdown buttons to their associated menus
+            const buttonMenuMap = new Map<HTMLElement, HTMLElement>();
+            
+            dropdownButtons.forEach((button) => {
+              const buttonId = button.getAttribute('id');
+              let menu: HTMLElement | null = null;
+              
+              if (buttonId) {
+                const menuId = buttonId.replace('dropdown-btn', 'dropdown-menu');
+                menu = container.querySelector(`#${menuId}`) as HTMLElement;
+              }
+              
+              if (!menu) {
+                let current: Element | null = button.nextElementSibling;
+                while (current) {
+                  if (current.tagName === 'VDS-DROPDOWN-MENU') {
+                    menu = current as HTMLElement;
+                    break;
+                  }
+                  current = current.nextElementSibling;
+                }
+              }
+              
+              if (!menu && button.parentElement) {
+                menu = button.parentElement.querySelector('vds-dropdown-menu') as HTMLElement;
+              }
+              
+              if (menu) {
+                buttonMenuMap.set(button as HTMLElement, menu);
+              }
+            });
+            
+            // Only close menus that are associated with dropdown buttons and are currently visible
+            buttonMenuMap.forEach((menu, button) => {
+              const menuElement = menu as HTMLElement;
+              const isVisible = menuElement.style.display !== 'none' && 
+                               menuElement.style.display !== '' &&
+                               getComputedStyle(menuElement).display !== 'none';
+              
+              // Only process if menu is actually visible
+              if (!isVisible) return;
+              
+              // Check if click is outside both the button and menu
+              let shouldClose = true;
+              
+              // Check if click is on or inside the associated dropdown button
+              if (button.contains(target)) {
+                shouldClose = false;
+              }
+              
+              // Check if click is on or inside the menu
+              if (menuElement.contains(target)) {
+                shouldClose = false;
+              }
+              
+              if (shouldClose) {
+                menuElement.style.display = 'none';
+              }
+            });
+          }
+        };
+        
+        document.addEventListener('click', (window as any).__vdsDropdownMenuCloseHandler, true);
+      }
+    };
+    
     // Set up listeners multiple times with different timing strategies
     const setupListeners = () => {
       if (!previewContainer.value) {
@@ -269,13 +433,16 @@ function renderPreview() {
       // Check if buttons actually exist before trying to attach
       const hasButtons = previewContainer.value.querySelectorAll('vds-button').length > 0;
       const hasModals = previewContainer.value.querySelectorAll('vds-modal').length > 0;
+      const hasDropdownButtons = previewContainer.value.querySelectorAll('vds-dropdown-button').length > 0;
+      const hasDropdownMenus = previewContainer.value.querySelectorAll('vds-dropdown-menu').length > 0;
       
-      console.log('[ComponentDemo] Setting up listeners. Buttons:', hasButtons, 'Modals:', hasModals);
+      console.log('[ComponentDemo] Setting up listeners. Buttons:', hasButtons, 'Modals:', hasModals, 'DropdownButtons:', hasDropdownButtons, 'DropdownMenus:', hasDropdownMenus);
       
-      if (hasButtons || hasModals) {
+      if (hasButtons || hasModals || hasDropdownButtons || hasDropdownMenus) {
         attachButtonListeners();
+        attachDropdownButtonListeners();
       } else {
-        console.log('[ComponentDemo] No buttons or modals found yet');
+        console.log('[ComponentDemo] No interactive components found yet');
       }
     };
     
@@ -285,7 +452,9 @@ function renderPreview() {
     // After custom elements are defined
     Promise.all([
       customElements.whenDefined('vds-button').catch(() => Promise.resolve()),
-      customElements.whenDefined('vds-modal').catch(() => Promise.resolve())
+      customElements.whenDefined('vds-modal').catch(() => Promise.resolve()),
+      customElements.whenDefined('vds-dropdown-button').catch(() => Promise.resolve()),
+      customElements.whenDefined('vds-dropdown-menu').catch(() => Promise.resolve())
     ]).then(() => {
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
@@ -379,6 +548,7 @@ function renderPreview() {
           (previewContainer.value as any)._modalObserverTimeout = setTimeout(() => {
             // Only set up listeners, don't reset modals that are open
             attachButtonListeners();
+            attachDropdownButtonListeners();
           }, 100);
         }
       });
@@ -554,6 +724,19 @@ onBeforeUnmount(() => {
         button.removeEventListener('click', closeHandler, true);
       }
     });
+    
+    // Remove listeners from all dropdown buttons
+    const dropdownButtons = previewContainer.value.querySelectorAll('vds-dropdown-button');
+    dropdownButtons.forEach((button) => {
+      const handler = (button as any)._dropdownButtonHandler;
+      
+      if (handler) {
+        button.removeEventListener('vds-dropdown-button-click', handler, true);
+      }
+    });
+    
+    // Note: We don't remove the global document handler on unmount
+    // because it's shared across all ComponentDemo instances
   }
 });
 </script>
@@ -562,7 +745,7 @@ onBeforeUnmount(() => {
 .component-demo {
   border: 1px solid var(--vp-c-divider);
   border-radius: 8px;
-  overflow: hidden;
+  overflow: visible;
   margin: 1.5rem 0;
 }
 
@@ -596,12 +779,14 @@ onBeforeUnmount(() => {
 
 .tab-content {
   background: var(--vp-c-bg);
+  overflow: visible;
 }
 
 .preview {
   padding: 2rem;
   min-height: 100px;
   display: block;
+  overflow: visible;
 }
 
 .preview[style*="display: none"] {
@@ -613,6 +798,8 @@ onBeforeUnmount(() => {
   flex-wrap: wrap;
   gap: 1rem;
   align-items: center;
+  overflow: visible;
+  position: relative;
 }
 
 .code {

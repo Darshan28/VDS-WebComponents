@@ -215,6 +215,19 @@ export class VDSButton extends LitElement {
       line-height: 1;
       color: inherit;
     }
+
+    /* Icon-only button styles - square button with equal padding */
+    :host([icon-only]) button {
+      padding: var(--vds-btn-padding-y);
+      aspect-ratio: 1;
+      min-width: var(--vds-btn-min-height);
+      width: var(--vds-btn-min-height);
+      gap: 0 !important;
+    }
+
+    :host([icon-only]) button span[part="label"] {
+      display: none;
+    }
   `;
 
   @property({ type: String, reflect: true })
@@ -237,6 +250,43 @@ export class VDSButton extends LitElement {
 
   @query('button')
   accessor buttonElement!: HTMLButtonElement;
+
+  private get defaultSlot(): HTMLSlotElement | null {
+    return this.shadowRoot?.querySelector('slot:not([name])') || null;
+  }
+
+  private get isIconOnly(): boolean {
+    const slot = this.defaultSlot;
+    if (!slot) return false;
+
+    const assignedNodes = slot.assignedNodes({ flatten: true });
+    const hasTextContent = assignedNodes.some(
+      node => node.nodeType === Node.TEXT_NODE && node.textContent?.trim()
+    );
+
+    // Check if there's an icon in prefix-icon, suffix-icon, or icon slots
+    const hasPrefixIcon = this.querySelector('[slot="prefix-icon"]') !== null;
+    const hasSuffixIcon = this.querySelector('[slot="suffix-icon"]') !== null;
+    const hasIcon = this.querySelector('[slot="icon"]') !== null;
+
+    // Icon-only if there's no text content but there is an icon
+    return !hasTextContent && (hasPrefixIcon || hasSuffixIcon || hasIcon);
+  }
+
+  private handleSlotChange(): void {
+    this.requestUpdate();
+  }
+
+  updated(changedProperties: Map<PropertyKey, unknown>): void {
+    super.updated(changedProperties);
+    
+    // Update icon-only attribute on host element
+    if (this.isIconOnly) {
+      this.setAttribute('icon-only', '');
+    } else {
+      this.removeAttribute('icon-only');
+    }
+  }
 
   private handleClick(event: MouseEvent): void {
     if (this.disabled) {
@@ -281,12 +331,12 @@ export class VDSButton extends LitElement {
         role="button"
         tabindex=${this.disabled ? -1 : 0}
       >
-        <slot name="prefix-icon" part="prefix-icon"></slot>
-        <slot name="icon" part="icon"></slot>
+        <slot name="prefix-icon" part="prefix-icon" @slotchange=${this.handleSlotChange}></slot>
+        <slot name="icon" part="icon" @slotchange=${this.handleSlotChange}></slot>
         <span part="label">
-          <slot></slot>
+          <slot @slotchange=${this.handleSlotChange}></slot>
         </span>
-        <slot name="suffix-icon" part="suffix-icon"></slot>
+        <slot name="suffix-icon" part="suffix-icon" @slotchange=${this.handleSlotChange}></slot>
       </button>
     `;
   }
