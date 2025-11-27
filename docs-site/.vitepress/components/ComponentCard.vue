@@ -40,7 +40,7 @@ function renderPreview() {
   thumbnailContainer.value.innerHTML = props.preview;
   
   // Force upgrade of custom elements
-  const components = thumbnailContainer.value.querySelectorAll('vds-button, vds-input, vds-modal');
+  const components = thumbnailContainer.value.querySelectorAll('vds-button, vds-input, vds-modal, vds-menu-item, vds-dropdown-button, vds-dropdown-menu, vds-avatar, vds-badge, vds-checkbox, vds-icon');
   components.forEach((el) => {
     if (el.constructor === HTMLElement) {
       const tagName = el.tagName.toLowerCase();

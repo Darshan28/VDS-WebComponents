@@ -43,6 +43,62 @@ The `vds-button` component is a customizable, accessible button component.
   <vds-icon slot="suffix-icon" name="arrow-right" aria-hidden="true"></vds-icon>
 </vds-button>' />
 
+## Icon-Only Buttons
+
+Icon-only buttons automatically render as square buttons when only an icon is provided (no text content). The button will automatically detect when it's icon-only and adjust its styling accordingly. Ensure you provide an `aria-label` for accessibility.
+
+<ComponentDemo code='<vds-button aria-label="Arrow up">
+  <vds-icon slot="icon" name="arrow-up" aria-hidden="true"></vds-icon>
+</vds-button>
+<vds-button variant="secondary" aria-label="Settings">
+  <vds-icon slot="icon" name="settings" aria-hidden="true"></vds-icon>
+</vds-button>
+<vds-button variant="warning" aria-label="Star">
+  <vds-icon slot="icon" name="star" aria-hidden="true"></vds-icon>
+</vds-button>
+<vds-button variant="danger" aria-label="Delete">
+  <vds-icon slot="icon" name="trash" aria-hidden="true"></vds-icon>
+</vds-button>
+<vds-button variant="info" aria-label="Information">
+  <vds-icon slot="icon" name="info" aria-hidden="true"></vds-icon>
+</vds-button>' />
+
+### Icon-Only with Different Appearances
+
+<ComponentDemo code='<vds-button appearance="filled" aria-label="Add">
+  <vds-icon slot="icon" name="plus" aria-hidden="true"></vds-icon>
+</vds-button>
+<vds-button appearance="outline" aria-label="Add">
+  <vds-icon slot="icon" name="plus" aria-hidden="true"></vds-icon>
+</vds-button>
+<vds-button appearance="text" aria-label="Add">
+  <vds-icon slot="icon" name="plus" aria-hidden="true"></vds-icon>
+</vds-button>' />
+
+### Icon-Only with Different Sizes
+
+<ComponentDemo code='<vds-button size="sm" aria-label="Arrow up">
+  <vds-icon slot="icon" name="arrow-up" aria-hidden="true"></vds-icon>
+</vds-button>
+<vds-button size="md" aria-label="Arrow up">
+  <vds-icon slot="icon" name="arrow-up" aria-hidden="true"></vds-icon>
+</vds-button>
+<vds-button size="lg" aria-label="Arrow up">
+  <vds-icon slot="icon" name="arrow-up" aria-hidden="true"></vds-icon>
+</vds-button>' />
+
+### Icon-Only with Different Shapes
+
+<ComponentDemo code='<vds-button shape="rounded" aria-label="Arrow up">
+  <vds-icon slot="icon" name="arrow-up" aria-hidden="true"></vds-icon>
+</vds-button>
+<vds-button shape="pill" aria-label="Arrow up">
+  <vds-icon slot="icon" name="arrow-up" aria-hidden="true"></vds-icon>
+</vds-button>
+<vds-button shape="sharp" aria-label="Arrow up">
+  <vds-icon slot="icon" name="arrow-up" aria-hidden="true"></vds-icon>
+</vds-button>' />
+
 ## Disabled State
 
 <ComponentDemo code='<vds-button disabled>Disabled</vds-button>' />

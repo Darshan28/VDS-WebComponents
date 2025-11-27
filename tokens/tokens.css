@@ -345,37 +345,7 @@
   --vds-z-index-tooltip: 1070;
 }
 
-/* Dark Mode Tokens */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --vds-color-text-primary: var(--vds-color-slate-900);
-    --vds-color-text-secondary: var(--vds-color-slate-300);
-    --vds-color-text-disabled: var(--vds-color-slate-600);
-    --vds-color-text-inverse: var(--vds-color-dark-900);
-    --vds-color-text-link: var(--vds-color-sky-300);
-    --vds-color-text-link-hover: var(--vds-color-sky-200);
-
-    --vds-color-bg-default: var(--vds-color-dark-800);
-    --vds-color-bg-primary: var(--vds-color-dark-700);
-    --vds-color-bg-secondary: var(--vds-color-dark-800);
-    --vds-color-bg-tertiary: var(--vds-color-dark-900);
-    --vds-color-bg-overlay: rgba(0, 0, 0, 0.7);
-    --vds-color-bg-layout: var(--vds-color-dark-800);
-    --vds-color-bg-sidebar: var(--vds-color-dark-700);
-    --vds-color-bg-disabled: var(--vds-color-dark-500);
-
-    --vds-color-border-default: var(--vds-color-dark-500);
-    --vds-color-border-muted: var(--vds-color-dark-600);
-    --vds-color-border-strong: var(--vds-color-dark-300);
-    --vds-color-border-dark: var(--vds-color-black);
-    --vds-color-border-focus: var(--vds-color-sky-400);
-    --vds-color-border-error: var(--vds-color-error);
-    --vds-color-border-success: var(--vds-color-success);
-    --vds-color-border-warning: var(--vds-color-warning);
-  }
-}
-
-/* Dark Mode Class Override */
+/* Dark Mode overrides are opt-in via data-theme to avoid automatic color changes */
 [data-theme="dark"] {
   --vds-color-text-primary: var(--vds-color-slate-100);
   --vds-color-text-secondary: var(--vds-color-slate-300);

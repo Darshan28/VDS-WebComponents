@@ -30,6 +30,10 @@
     "./badge": {
       "import": "./packages/vds-badge/dist/vds-badge.js",
       "types": "./packages/vds-badge/dist/vds-badge.d.ts"
+    },
+    "./avatar": {
+      "import": "./packages/vds-avatar/dist/vds-avatar.js",
+      "types": "./packages/vds-avatar/dist/vds-avatar.d.ts"
     }
   },
   "files": [

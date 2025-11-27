@@ -1,14 +1,14 @@
 {
-  "name": "@vds/input",
+  "name": "@vds/avatar",
   "version": "0.0.0-semantic-release",
-  "description": "VDS Input Web Component",
+  "description": "VDS Avatar Web Component",
   "type": "module",
-  "main": "./dist/vds-input.js",
-  "types": "./dist/vds-input.d.ts",
+  "main": "./dist/vds-avatar.js",
+  "types": "./dist/vds-avatar.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/vds-input.js",
-      "types": "./dist/vds-input.d.ts"
+      "import": "./dist/vds-avatar.js",
+      "types": "./dist/vds-avatar.d.ts"
     }
   },
   "files": [
@@ -20,10 +20,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "lit": "^3.1.0",
-    "@vds/dropdown-button": "workspace:*",
-    "@vds/icon": "workspace:*",
-    "flatpickr": "^4.6.13"
+    "lit": "^3.1.0"
   },
   "devDependencies": {
     "@open-wc/testing": "^3.1.7",

@@ -22,7 +22,7 @@ export default defineConfig({
       extensions: ['.mjs', '.js', '.mts', '.ts', '.jsx', '.tsx', '.json']
     },
     optimizeDeps: {
-      include: ['lit', 'lit/decorators.js', 'lit/directives/class-map.js']
+      include: ['lit', 'lit/decorators.js', 'lit/directives/class-map.js', 'flatpickr']
     },
     esbuild: {
       target: 'es2022',
@@ -51,7 +51,12 @@ export default defineConfig({
             { text: 'Icon', link: '/components/icon' },
             { text: 'Button', link: '/components/button' },
             { text: 'Badge', link: '/components/badge' },
+            { text: 'Avatar', link: '/components/avatar' },
+            { text: 'Checkbox', link: '/components/checkbox' },
             { text: 'Input', link: '/components/input' },
+            { text: 'Menu Item', link: '/components/menu-item' },
+            { text: 'Dropdown Button', link: '/components/dropdown-button' },
+            { text: 'Dropdown Menu', link: '/components/dropdown-menu' },
             { text: 'Modal', link: '/components/modal' }
           ]
         }

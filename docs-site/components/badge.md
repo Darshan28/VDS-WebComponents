@@ -32,9 +32,9 @@ The `vds-badge` component is a customizable badge component for labels, tags, an
   <vds-icon slot="icon" name="check" aria-hidden="true"></vds-icon>
   Verified
 </vds-badge>
-<vds-badge variant="warning">
-  <vds-icon slot="icon" name="alert" aria-hidden="true"></vds-icon>
-  Warning
+<vds-badge size="lg" variant="warning">
+  <vds-icon slot="icon" name="tag" aria-hidden="true"></vds-icon>
+  tag
 </vds-badge>' />
 
 ## CSS Custom Properties

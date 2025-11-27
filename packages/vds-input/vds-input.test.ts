@@ -1,4 +1,15 @@
 import { expect, fixture, html } from '@open-wc/testing';
+import { vi } from 'vitest';
+
+const flatpickrMock = vi.fn((element: HTMLElement) => ({
+  destroy: vi.fn(),
+  setDate: vi.fn(),
+  input: element as HTMLInputElement
+}));
+
+vi.mock('flatpickr', () => ({
+  default: flatpickrMock
+}));
 import { VDSInput } from './vds-input.js';
 
 describe('VDSInput', () => {
@@ -133,6 +144,49 @@ describe('VDSInput', () => {
     input.dispatchEvent(new Event('input', { bubbles: true }));
 
     expect(el.value).to.equal('new value');
+  });
+
+  it('should initialize flatpickr for date input', async () => {
+    flatpickrMock.mockClear();
+    await fixture<VDSInput>(html`<vds-input type="date"></vds-input>`);
+    expect(flatpickrMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('should initialize flatpickr for time input', async () => {
+    flatpickrMock.mockClear();
+    await fixture<VDSInput>(html`<vds-input type="time"></vds-input>`);
+    expect(flatpickrMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('should initialize flatpickr for datetime input', async () => {
+    flatpickrMock.mockClear();
+    await fixture<VDSInput>(html`<vds-input type="datetime"></vds-input>`);
+    expect(flatpickrMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('should initialize flatpickr for daterange input', async () => {
+    flatpickrMock.mockClear();
+    await fixture<VDSInput>(html`<vds-input type="daterange"></vds-input>`);
+    expect(flatpickrMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('should render password toggle button', async () => {
+    const el = await fixture<VDSInput>(html`<vds-input type="password"></vds-input>`);
+    await el.updateComplete;
+
+    const button = el.shadowRoot?.querySelector('.toggle-visibility') as HTMLButtonElement;
+    const input = el.shadowRoot?.querySelector('input') as HTMLInputElement;
+
+    expect(button).to.exist;
+    expect(input.type).to.equal('password');
+
+    button.click();
+    await el.updateComplete;
+    expect(input.type).to.equal('text');
+
+    button.click();
+    await el.updateComplete;
+    expect(input.type).to.equal('password');
   });
 });
 

@@ -34,6 +34,20 @@ const components = ref([
     preview: '<vds-badge>New</vds-badge>'
   },
   {
+    name: 'avatar',
+    title: 'Avatar',
+    description: 'Avatar component for displaying user images, initials, or icons',
+    link: '/components/avatar',
+    preview: '<vds-avatar variant="text" name="JD"></vds-avatar>'
+  },
+  {
+    name: 'checkbox',
+    title: 'Checkbox',
+    description: 'Checkbox input component with multiple sizes and states',
+    link: '/components/checkbox',
+    preview: '<vds-checkbox label="Checkbox"></vds-checkbox>'
+  },
+  {
     name: 'icon',
     title: 'Icon',
     description: 'Icon font component with sizing, color, and accessibility controls',
@@ -53,6 +67,27 @@ const components = ref([
     description: 'Modal dialog with focus trapping and keyboard navigation',
     link: '/components/modal',
     preview: '<vds-button>Open Modal</vds-button><vds-modal title="Modal Title"><p>Modal content</p></vds-modal>'
+  },
+  {
+    name: 'menu-item',
+    title: 'Menu Item',
+    description: 'Flexible menu item component with checkboxes, toggles, and various states',
+    link: '/components/menu-item',
+    preview: '<vds-menu-item>Menu item</vds-menu-item>'
+  },
+  {
+    name: 'dropdown-menu',
+    title: 'Dropdown Menu',
+    description: 'Container component for displaying lists of menu items with search and scrollable content',
+    link: '/components/dropdown-menu',
+    preview: '<vds-dropdown-menu><vds-menu-item>Item 1</vds-menu-item><vds-menu-item>Item 2</vds-menu-item></vds-dropdown-menu>'
+  },
+  {
+    name: 'dropdown-button',
+    title: 'Dropdown Button',
+    description: 'Dropdown button component with split and regular styles',
+    link: '/components/dropdown-button',
+    preview: '<vds-dropdown-button>Action</vds-dropdown-button>'
   }
 ]);
 </script>

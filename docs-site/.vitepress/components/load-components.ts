@@ -4,9 +4,14 @@
 
 // Import components - Vite will transform TypeScript automatically
 // Using .js extension (ESM standard) - Vite resolves to .ts files
+import '../../../packages/vds-avatar/vds-avatar.js';
 import '../../../packages/vds-badge/vds-badge.js';
 import '../../../packages/vds-button/vds-button.js';
+import '../../../packages/vds-checkbox/vds-checkbox.js';
+import '../../../packages/vds-dropdown-button/vds-dropdown-button.js';
+import '../../../packages/vds-dropdown-menu/vds-dropdown-menu.js';
 import '../../../packages/vds-icon/vds-icon.js';
 import '../../../packages/vds-input/vds-input.js';
+import '../../../packages/vds-menu-item/vds-menu-item.js';
 import '../../../packages/vds-modal/vds-modal.js';
 
