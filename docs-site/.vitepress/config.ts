@@ -55,6 +55,8 @@ export default defineConfig({
             { text: 'Checkbox', link: '/components/checkbox' },
             { text: 'Date', link: '/components/date' },
             { text: 'Input', link: '/components/input' },
+            { text: 'Tab', link: '/components/tab' },
+            { text: 'Tab Item', link: '/components/tab-item' },
             { text: 'Menu Item', link: '/components/menu-item' },
             { text: 'Dropdown Button', link: '/components/dropdown-button' },
             { text: 'Dropdown Menu', link: '/components/dropdown-menu' },

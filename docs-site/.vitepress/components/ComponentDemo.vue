@@ -98,7 +98,7 @@ function renderPreview() {
     
     // Force upgrade of any custom elements
     // This ensures web components are properly initialized
-    const components = previewContainer.value.querySelectorAll('vds-button, vds-input, vds-modal, vds-dropdown-button, vds-dropdown-menu, vds-menu-item, vds-checkbox, vds-icon, vds-avatar, vds-badge, vds-date');
+    const components = previewContainer.value.querySelectorAll('vds-button, vds-input, vds-modal, vds-dropdown-button, vds-dropdown-menu, vds-menu, vds-menu-item, vds-checkbox, vds-icon, vds-avatar, vds-badge, vds-date, vds-tab, vds-tab-item');
     components.forEach((el) => {
       // Check if element is already defined and upgrade it
       if (el.constructor === HTMLElement) {
@@ -121,15 +121,23 @@ function renderPreview() {
       customElements.whenDefined('vds-date').catch(() => Promise.resolve()),
       customElements.whenDefined('vds-dropdown-button').catch(() => Promise.resolve()),
       customElements.whenDefined('vds-dropdown-menu').catch(() => Promise.resolve()),
+      customElements.whenDefined('vds-menu').catch(() => Promise.resolve()),
       customElements.whenDefined('vds-menu-item').catch(() => Promise.resolve()),
       customElements.whenDefined('vds-checkbox').catch(() => Promise.resolve()),
       customElements.whenDefined('vds-icon').catch(() => Promise.resolve()),
       customElements.whenDefined('vds-avatar').catch(() => Promise.resolve())
     ]).then(() => {
-      // Force update all dropdown menus and menu items after they're upgraded
+      // Force update all dropdown menus, menus, and menu items after they're upgraded
       requestAnimationFrame(() => {
         const dropdownMenus = previewContainer.value?.querySelectorAll('vds-dropdown-menu');
         dropdownMenus?.forEach((menu: any) => {
+          if (menu.requestUpdate) {
+            menu.requestUpdate();
+          }
+        });
+        
+        const menus = previewContainer.value?.querySelectorAll('vds-menu');
+        menus?.forEach((menu: any) => {
           if (menu.requestUpdate) {
             menu.requestUpdate();
           }

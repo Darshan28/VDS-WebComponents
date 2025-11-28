@@ -69,6 +69,20 @@ const components = ref([
     preview: '<vds-input label="Email" type="email" placeholder="Enter your email"></vds-input>'
   },
   {
+    name: 'tab',
+    title: 'Tab',
+    description: 'Container component for managing multiple tab items with variants and overflow handling',
+    link: '/components/tab',
+    preview: '<vds-tab><vds-tab-item active>Tab 1</vds-tab-item><vds-tab-item>Tab 2</vds-tab-item></vds-tab>'
+  },
+  {
+    name: 'tab-item',
+    title: 'Tab Item',
+    description: 'Composable tab trigger with icons, badges, and close support',
+    link: '/components/tab-item',
+    preview: '<vds-tab-item active>Tab</vds-tab-item>'
+  },
+  {
     name: 'modal',
     title: 'Modal',
     description: 'Modal dialog with focus trapping and keyboard navigation',
