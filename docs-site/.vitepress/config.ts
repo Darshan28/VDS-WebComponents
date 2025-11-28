@@ -53,6 +53,7 @@ export default defineConfig({
             { text: 'Badge', link: '/components/badge' },
             { text: 'Avatar', link: '/components/avatar' },
             { text: 'Checkbox', link: '/components/checkbox' },
+            { text: 'Date', link: '/components/date' },
             { text: 'Input', link: '/components/input' },
             { text: 'Menu Item', link: '/components/menu-item' },
             { text: 'Dropdown Button', link: '/components/dropdown-button' },

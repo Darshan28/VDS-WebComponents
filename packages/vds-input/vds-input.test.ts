@@ -188,5 +188,112 @@ describe('VDSInput', () => {
     await el.updateComplete;
     expect(input.type).to.equal('password');
   });
+
+  it('should validate email format on blur', async () => {
+    const el = await fixture<VDSInput>(html`<vds-input type="email" validate-on-blur></vds-input>`);
+    const input = el.shadowRoot?.querySelector('input') as HTMLInputElement;
+
+    // Set invalid email
+    input.value = 'invalid-email';
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+    await el.updateComplete;
+
+    // Blur to trigger validation
+    input.dispatchEvent(new Event('blur', { bubbles: true }));
+    await el.updateComplete;
+
+    expect(el.state).to.equal('error');
+    expect(el.errorMessage).to.equal('Please enter a valid email address');
+  });
+
+  it('should clear error state when valid email is entered', async () => {
+    const el = await fixture<VDSInput>(html`<vds-input type="email" validate-on-blur></vds-input>`);
+    const input = el.shadowRoot?.querySelector('input') as HTMLInputElement;
+
+    // Set invalid email and blur
+    input.value = 'invalid-email';
+    input.dispatchEvent(new Event('blur', { bubbles: true }));
+    await el.updateComplete;
+    expect(el.state).to.equal('error');
+
+    // Enter valid email
+    input.value = 'valid@example.com';
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+    await el.updateComplete;
+
+    // Blur to trigger validation
+    input.dispatchEvent(new Event('blur', { bubbles: true }));
+    await el.updateComplete;
+
+    expect(el.state).to.equal('normal');
+  });
+
+  it('should allow custom error message', async () => {
+    const el = await fixture<VDSInput>(
+      html`<vds-input type="email" error-message="Custom error message"></vds-input>`
+    );
+    const input = el.shadowRoot?.querySelector('input') as HTMLInputElement;
+
+    input.value = 'invalid-email';
+    input.dispatchEvent(new Event('blur', { bubbles: true }));
+    await el.updateComplete;
+
+    expect(el.errorMessage).to.equal('Custom error message');
+  });
+
+  it('should provide validate() method', async () => {
+    const el = await fixture<VDSInput>(html`<vds-input type="email" value="invalid-email"></vds-input>`);
+    
+    const isValid = el.validate();
+    expect(isValid).to.be.false;
+    expect(el.state).to.equal('error');
+
+    el.value = 'valid@example.com';
+    const isValidAfter = el.validate();
+    expect(isValidAfter).to.be.true;
+    expect(el.state).to.equal('normal');
+  });
+
+  it('should use custom date format', async () => {
+    flatpickrMock.mockClear();
+    const el = await fixture<VDSInput>(
+      html`<vds-input type="date" date-format="m/d/Y"></vds-input>`
+    );
+    expect(flatpickrMock).toHaveBeenCalledTimes(1);
+    const config = flatpickrMock.mock.calls[0][1];
+    expect(config.dateFormat).to.equal('m/d/Y');
+  });
+
+  it('should use custom time format', async () => {
+    flatpickrMock.mockClear();
+    const el = await fixture<VDSInput>(
+      html`<vds-input type="time" time-format="h:i K" time-24hr="false"></vds-input>`
+    );
+    expect(flatpickrMock).toHaveBeenCalledTimes(1);
+    const config = flatpickrMock.mock.calls[0][1];
+    expect(config.dateFormat).to.equal('h:i K');
+    expect(config.time_24hr).to.be.false;
+  });
+
+  it('should use custom datetime format', async () => {
+    flatpickrMock.mockClear();
+    const el = await fixture<VDSInput>(
+      html`<vds-input type="datetime" datetime-format="m/d/Y h:i K"></vds-input>`
+    );
+    expect(flatpickrMock).toHaveBeenCalledTimes(1);
+    const config = flatpickrMock.mock.calls[0][1];
+    expect(config.dateFormat).to.equal('m/d/Y h:i K');
+  });
+
+  it('should use custom daterange format', async () => {
+    flatpickrMock.mockClear();
+    const el = await fixture<VDSInput>(
+      html`<vds-input type="daterange" daterange-format="m/d/Y"></vds-input>`
+    );
+    expect(flatpickrMock).toHaveBeenCalledTimes(1);
+    const config = flatpickrMock.mock.calls[0][1];
+    expect(config.dateFormat).to.equal('m/d/Y');
+    expect(config.mode).to.equal('range');
+  });
 });
 

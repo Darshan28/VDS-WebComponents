@@ -8,6 +8,7 @@ import '../../../packages/vds-avatar/vds-avatar.js';
 import '../../../packages/vds-badge/vds-badge.js';
 import '../../../packages/vds-button/vds-button.js';
 import '../../../packages/vds-checkbox/vds-checkbox.js';
+import '../../../packages/vds-date/vds-date.js';
 import '../../../packages/vds-dropdown-button/vds-dropdown-button.js';
 import '../../../packages/vds-dropdown-menu/vds-dropdown-menu.js';
 import '../../../packages/vds-icon/vds-icon.js';

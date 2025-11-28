@@ -48,6 +48,13 @@ const components = ref([
     preview: '<vds-checkbox label="Checkbox"></vds-checkbox>'
   },
   {
+    name: 'date',
+    title: 'Date',
+    description: 'Date and time picker component using Flatpickr',
+    link: '/components/date',
+    preview: '<vds-date label="Date" type="date" placeholder="Select a date"></vds-date>'
+  },
+  {
     name: 'icon',
     title: 'Icon',
     description: 'Icon font component with sizing, color, and accessibility controls',

@@ -30,7 +30,7 @@ import { VDSInput } from '@vds/input';
 
 | Attribute | Type | Default | Description |
 |-----------|------|---------|-------------|
-| `type` | `'text' \| 'textarea' \| 'relationship' \| 'phone' \| 'currency' \| 'email' \| 'password' \| 'date' \| 'time' \| 'datetime' \| 'daterange'` | `'text'` | Input type |
+| `type` | `'text' \| 'textarea' \| 'relationship' \| 'phone' \| 'currency' \| 'email' \| 'password'` | `'text'` | Input type |
 | `state` | `'normal' \| 'read-only' \| 'disabled' \| 'error' \| 'active'` | `'normal'` | Input state |
 | `value` | `string` | `''` | Input value |
 | `placeholder` | `string` | `''` | Placeholder text |
@@ -41,6 +41,8 @@ import { VDSInput } from '@vds/input';
 | `disabled` | `boolean` | `false` | Whether the input is disabled |
 | `readonly` | `boolean` | `false` | Whether the input is read-only |
 | `prefix-dropdown-text` | `string` | `''` | Text for prefix dropdown button (phone/currency types) |
+| `error-message` | `string` | `''` | Custom error message to display when validation fails |
+| `validate-on-blur` | `boolean` | `true` | Whether to validate email on blur (email type only) |
 | `aria-label` | `string` | `''` | Accessible label |
 | `aria-describedby` | `string` | `''` | ID of element that describes the input |
 
@@ -200,52 +202,31 @@ Fired when navigation buttons are clicked (relationship type only).
 ></vds-input>
 ```
 
-### Date Input (Flatpickr)
+### Email Input with Validation
 
-`type="date"` ships with the [Flatpickr](https://flatpickr.js.org/) calendar baked into the component bundle (no CDN required). You can still type manually or provide custom `helper-text`.
+`type="email"` includes automatic email format validation. Validation occurs on blur by default (can be disabled with `validate-on-blur="false"`). Invalid emails will show an error state with a default or custom error message.
 
 ```html
 <vds-input 
-  label="Meeting date" 
-  type="date" 
-  helper-text="Select a date"
+  label="Email address" 
+  type="email" 
+  placeholder="name@company.com"
+  helper-text="We'll never share your email"
+></vds-input>
+
+<!-- With custom error message -->
+<vds-input 
+  label="Email address" 
+  type="email" 
+  error-message="Please provide a valid email"
 ></vds-input>
 ```
 
-### Time Input (Flatpickr)
+You can also programmatically validate using the `validate()` method:
 
-`type="time"` enables a time picker using Flatpickr with 24-hour format.
-
-```html
-<vds-input 
-  label="Meeting time" 
-  type="time" 
-  helper-text="Select a time"
-></vds-input>
-```
-
-### DateTime Input (Flatpickr)
-
-`type="datetime"` enables a combined date and time picker using Flatpickr.
-
-```html
-<vds-input 
-  label="Meeting date & time" 
-  type="datetime" 
-  helper-text="Select date and time"
-></vds-input>
-```
-
-### Date Range Input (Flatpickr)
-
-`type="daterange"` enables a date range picker using Flatpickr, allowing users to select a start and end date.
-
-```html
-<vds-input 
-  label="Date range" 
-  type="daterange" 
-  helper-text="Select start and end dates"
-></vds-input>
+```javascript
+const input = document.querySelector('vds-input[type="email"]');
+const isValid = input.validate(); // returns true/false
 ```
 
 ### With Info Icon and Helper Text
