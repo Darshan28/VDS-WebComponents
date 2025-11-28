@@ -206,6 +206,9 @@ export class VDSMenuItem extends LitElement {
   @property({ type: Boolean, reflect: true })
   accessor selected = false;
 
+  @property({ type: String })
+  accessor value = '';
+
   updated(changedProperties: Map<string | number | symbol, unknown>): void {
     super.updated(changedProperties);
     
@@ -258,6 +261,18 @@ export class VDSMenuItem extends LitElement {
       event.stopPropagation();
       return;
     }
+
+    // Dispatch select event when menu item is clicked
+    this.dispatchEvent(
+      new CustomEvent('vds-menu-item-select', {
+        detail: { 
+          value: this.value || '',
+          originalEvent: event 
+        },
+        bubbles: true,
+        composed: true
+      })
+    );
   }
 
   private handleMouseEnter(): void {

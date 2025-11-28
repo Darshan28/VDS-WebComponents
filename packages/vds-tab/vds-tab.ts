@@ -168,6 +168,8 @@ export class VDSTab extends LitElement {
   @state()
   private accessor hasCustomOverflowIconState = false;
 
+  private skipNextRecalculation = false;
+
   @query('.tabs')
   private accessor tabsContainer!: HTMLElement;
 
@@ -192,6 +194,11 @@ export class VDSTab extends LitElement {
     // Check for custom overflow icon
     this.hasCustomOverflowIconState = this.querySelector('[slot="overflow-icon"]') !== null;
     this.updateOverflowIcon();
+    // Set up click outside handler
+    document.addEventListener('click', this.handleClickOutside);
+    
+    // Set up event listener for menu item select (as a fallback)
+    this.addEventListener('vds-menu-item-select', this.handleOverflowTabSelect as EventListener);
   }
 
   disconnectedCallback(): void {
@@ -199,13 +206,17 @@ export class VDSTab extends LitElement {
     if (this.resizeObserver) {
       this.resizeObserver.disconnect();
     }
-    document.removeEventListener('click', this.handleClickOutside.bind(this));
+    document.removeEventListener('click', this.handleClickOutside);
+    this.removeEventListener('vds-menu-item-select', this.handleOverflowTabSelect as EventListener);
   }
 
   private setupResizeObserver(): void {
     if (typeof ResizeObserver !== 'undefined') {
       this.resizeObserver = new ResizeObserver(() => {
-        this.calculateVisibleTabs();
+        // Don't recalculate if we just did a swap
+        if (!this.skipNextRecalculation) {
+          this.calculateVisibleTabs();
+        }
       });
       if (this.container) {
         this.resizeObserver.observe(this.container);
@@ -230,9 +241,12 @@ export class VDSTab extends LitElement {
 
     if (changedProperties.has('variant') || changedProperties.has('size') || changedProperties.has('overflowCount')) {
       // Recalculate visible tabs when variant, size, or overflowCount changes
-      requestAnimationFrame(() => {
-        this.calculateVisibleTabs();
-      });
+      // But skip if we just did a swap
+      if (!this.skipNextRecalculation) {
+        requestAnimationFrame(() => {
+          this.calculateVisibleTabs();
+        });
+      }
     }
 
     // Check for custom overflow icon (check both overflow-icon and icon slots in case it was already moved)
@@ -327,6 +341,12 @@ export class VDSTab extends LitElement {
   }
 
   private calculateVisibleTabs(): void {
+    // Skip recalculation if we just did a manual swap
+    if (this.skipNextRecalculation) {
+      this.skipNextRecalculation = false;
+      return;
+    }
+
     // If overflowCount is explicitly set, use manual overflow
     if (this.overflowCount > 0) {
       const items = Array.from(this.querySelectorAll('vds-tab-item')) as HTMLElement[];
@@ -488,36 +508,146 @@ export class VDSTab extends LitElement {
     this.overflowMenuOpen = !this.overflowMenuOpen;
   }
 
-  private handleOverflowTabSelect(event: Event): void {
+  private handleMenuClick = (event: Event): void => {
+    // Handle click events on menu items as a fallback
     const target = event.target as HTMLElement;
     const menuItem = target.closest('vds-menu-item') as any;
-    if (!menuItem) return;
+    if (menuItem && menuItem.value) {
+      // If the custom event didn't fire, handle it directly
+      const syntheticEvent = new CustomEvent('vds-menu-item-select', {
+        detail: {
+          value: menuItem.value || '',
+          originalEvent: event
+        },
+        bubbles: true,
+        composed: true
+      });
+      this.handleOverflowTabSelect(syntheticEvent as CustomEvent<{ value: string; originalEvent?: Event }>);
+    }
+  };
 
-    const value = menuItem.value || '';
-    if (value) {
+  private handleOverflowTabSelect = (event: Event): void => {
+    console.log('handleOverflowTabSelect called', event, event.type);
+    const customEvent = event as CustomEvent<{ value: string; originalEvent?: Event }>;
+    customEvent.stopPropagation();
+    const detail = customEvent.detail || {};
+    const value = detail.value || '';
+    console.log('Selected value:', value, 'Detail:', detail);
+    if (!value) {
+      console.warn('No value in event detail', detail);
+      return;
+    }
+
+    // Find the index of the selected overflow tab
+    const items = Array.from(this.querySelectorAll('vds-tab-item'));
+    const selectedIndex = items.findIndex((item: any) => item.value === value);
+    console.log('Selected index:', selectedIndex, 'Visible:', this.visibleTabIndices, 'Overflow:', this.overflowTabIndices);
+    
+    if (selectedIndex === -1) {
+      console.warn('Selected tab not found');
+      return;
+    }
+
+    // Check if the selected tab is in overflow
+    if (!this.overflowTabIndices.includes(selectedIndex)) {
+      console.log('Tab is already visible, just selecting');
+      // Tab is already visible, just select it
       this.value = value;
       this.activeValue = value;
+      this.updateActiveTab();
+      this.overflowMenuOpen = false;
+      this.requestUpdate();
+      
+      this.dispatchEvent(
+        new CustomEvent<TabChangeEventDetail>('vds-tab-change', {
+          detail: {
+            value: value,
+            originalEvent: event
+          },
+          bubbles: true,
+          composed: true
+        })
+      );
+      return;
     }
+
+    // Swap: move selected overflow tab to visible, move last visible tab to overflow
+    if (this.visibleTabIndices.length > 0) {
+      const lastVisibleIndex = this.visibleTabIndices[this.visibleTabIndices.length - 1];
+      console.log('Swapping:', { selectedIndex, lastVisibleIndex, beforeVisible: [...this.visibleTabIndices], beforeOverflow: [...this.overflowTabIndices] });
+      
+      // Skip recalculation BEFORE swapping to prevent ResizeObserver from interfering
+      this.skipNextRecalculation = true;
+      
+      // Swap the indices - create new arrays to ensure Lit detects the change
+      const newVisibleIndices = [...this.visibleTabIndices];
+      newVisibleIndices[newVisibleIndices.length - 1] = selectedIndex;
+      
+      const newOverflowIndices = [...this.overflowTabIndices];
+      const overflowIndex = newOverflowIndices.indexOf(selectedIndex);
+      if (overflowIndex !== -1) {
+        newOverflowIndices[overflowIndex] = lastVisibleIndex;
+      } else {
+        newOverflowIndices.push(lastVisibleIndex);
+      }
+      
+      console.log('After swap:', { newVisible: newVisibleIndices, newOverflow: newOverflowIndices });
+
+      // Update state - this will trigger a re-render
+      this.visibleTabIndices = newVisibleIndices;
+      this.overflowTabIndices = newOverflowIndices;
+
+      // Update display styles immediately using the NEW arrays
+      items.forEach((item, index) => {
+        if (newVisibleIndices.includes(index)) {
+          item.style.display = '';
+        } else {
+          item.style.display = 'none';
+        }
+      });
+
+      // Update tab items styling (border radius, etc.)
+      this.updateTabItems();
+      
+      // Keep skip flag set for a bit longer to prevent any immediate recalculations
+      setTimeout(() => {
+        this.skipNextRecalculation = false;
+      }, 100);
+    }
+
+    // Set the selected tab as active AFTER the swap
+    this.value = value;
+    this.activeValue = value;
     this.updateActiveTab();
     this.overflowMenuOpen = false;
+
+    // Trigger UI update - this will re-render with the new indices
+    this.requestUpdate();
 
     this.dispatchEvent(
       new CustomEvent<TabChangeEventDetail>('vds-tab-change', {
         detail: {
           value: value,
-          originalEvent: event
+          originalEvent: customEvent
         },
         bubbles: true,
         composed: true
       })
     );
-  }
+  };
 
-  private handleClickOutside(event: MouseEvent): void {
-    if (this.overflowMenuOpen && !this.shadowRoot?.contains(event.target as Node)) {
+  private handleClickOutside = (event: MouseEvent): void => {
+    if (!this.overflowMenuOpen) return;
+    
+    const target = event.target as Node;
+    // Check if click is outside the component (not in shadow DOM or light DOM)
+    const isInsideComponent = this.contains(target) || this.shadowRoot?.contains(target);
+    
+    if (!isInsideComponent) {
       this.overflowMenuOpen = false;
+      this.requestUpdate();
     }
-  }
+  };
 
   private get hasOverflow(): boolean {
     // Use manual overflowCount if set, otherwise use automatic calculation
@@ -593,24 +723,29 @@ export class VDSTab extends LitElement {
                   ? html`
                       <vds-menu
                         class="overflow-menu"
-                        @click=${this.handleOverflowTabSelect}
+                        @vds-menu-item-select=${this.handleOverflowTabSelect}
+                        @click=${this.handleMenuClick}
                       >
                         ${this.overflowTabIndices.map((index) => {
                           const items = Array.from(this.querySelectorAll('vds-tab-item'));
                           const item = items[index] as any;
                           if (!item) return nothing;
                           
-                          const isActive = item.value === this.value || item.active;
+                          // Get value from property or attribute
+                          const itemValue = item.value || item.getAttribute('value') || '';
+                          const isActive = itemValue === this.value || item.active;
                           // Get text content from the tab item
                           const textContent = item.textContent?.trim() || '';
                           // Get icon if present
                           const iconSlot = item.querySelector('[slot="prefix-icon"]');
                           const iconName = iconSlot?.getAttribute('name') || '';
                           
+                          console.log('Rendering menu item', { index, itemValue, item, valueProp: item.value, valueAttr: item.getAttribute('value') });
+                          
                           return html`
                             <vds-menu-item
                               ?selected=${isActive}
-                              value=${item.value || ''}
+                              .value=${itemValue}
                             >
                               ${iconName ? html`<vds-icon name=${iconName} slot="prefix-icon"></vds-icon>` : nothing}
                               ${textContent}

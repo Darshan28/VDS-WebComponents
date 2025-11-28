@@ -257,3 +257,26 @@ The overflow menu:
 - Closes when a tab is selected or when clicking outside
 - Automatically positions below the overflow button
 
+### Overflow Menu Selection Behavior
+
+When you click on a tab in the overflow menu:
+- The selected tab replaces the last visible tab (the one right before the "show more" button)
+- The previous last visible tab moves into the overflow menu
+- The selected tab becomes active
+- This provides immediate visual feedback and brings the selected tab into view
+
+<ComponentDemo code='<div style="width: 400px;">
+  <vds-tab>
+    <vds-tab-item value="tab1" active>One View</vds-tab-item>
+    <vds-tab-item value="tab2">Details</vds-tab-item>
+    <vds-tab-item value="tab3">Updates</vds-tab-item>
+    <vds-tab-item value="tab4">Touchpoints</vds-tab-item>
+    <vds-tab-item value="tab5">Tasks</vds-tab-item>
+    <vds-tab-item value="tab6">Events</vds-tab-item>
+    <vds-tab-item value="tab7">Insights</vds-tab-item>
+    <vds-tab-item value="tab8">Analytics</vds-tab-item>
+  </vds-tab>
+</div>' />
+
+**Try it:** Click the overflow button and select a tab from the menu. Notice how the selected tab appears in the visible area, replacing the last visible tab.
+
