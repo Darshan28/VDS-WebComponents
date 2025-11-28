@@ -50,8 +50,8 @@ Icon-only buttons automatically render as square buttons when only an icon is pr
 <ComponentDemo code='<vds-button aria-label="Arrow up">
   <vds-icon slot="icon" name="arrow-up" aria-hidden="true"></vds-icon>
 </vds-button>
-<vds-button variant="secondary" aria-label="Settings">
-  <vds-icon slot="icon" name="settings" aria-hidden="true"></vds-icon>
+<vds-button variant="secondary" aria-label="gear">
+  <vds-icon slot="icon" name="gear" aria-hidden="true"></vds-icon>
 </vds-button>
 <vds-button variant="warning" aria-label="Star">
   <vds-icon slot="icon" name="star" aria-hidden="true"></vds-icon>
@@ -98,6 +98,46 @@ Icon-only buttons automatically render as square buttons when only an icon is pr
 <vds-button shape="sharp" aria-label="Arrow up">
   <vds-icon slot="icon" name="arrow-up" aria-hidden="true"></vds-icon>
 </vds-button>' />
+
+## Inverse Variant
+
+The inverse variant is designed for use on dark backgrounds. It features white/semi-transparent styling that provides proper contrast and visibility on dark surfaces.
+
+<ComponentDemo code='<div style="background: #070922; padding: 2rem; border-radius: 8px; display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
+<vds-button variant="inverse">Inverse</vds-button>
+<vds-button variant="inverse" appearance="outline">Outline</vds-button>
+<vds-button variant="inverse" appearance="text">Text</vds-button>
+</div>' />
+
+### Inverse Variant with Different Sizes
+
+<ComponentDemo code='<div style="background: #070922; padding: 2rem; border-radius: 8px; display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
+<vds-button variant="inverse" size="sm">Small</vds-button>
+<vds-button variant="inverse" size="md">Medium</vds-button>
+<vds-button variant="inverse" size="lg">Large</vds-button>
+</div>' />
+
+### Inverse Variant with Different Shapes
+
+<ComponentDemo code='<div style="background: #070922; padding: 2rem; border-radius: 8px; display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
+<vds-button variant="inverse" shape="rounded">Rounded</vds-button>
+<vds-button variant="inverse" shape="pill">Pill</vds-button>
+<vds-button variant="inverse" shape="sharp">Sharp</vds-button>
+</div>' />
+
+### Inverse Variant Icon-Only
+
+<ComponentDemo code='<div style="background: #070922; padding: 2rem; border-radius: 8px; display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
+<vds-button variant="inverse" aria-label="Arrow up">
+  <vds-icon slot="icon" name="arrow-up" aria-hidden="true"></vds-icon>
+</vds-button>
+<vds-button variant="inverse" appearance="outline" aria-label="gear">
+  <vds-icon slot="icon" name="gear" aria-hidden="true"></vds-icon>
+</vds-button>
+<vds-button variant="inverse" appearance="text" aria-label="Star">
+  <vds-icon slot="icon" name="star" aria-hidden="true"></vds-icon>
+</vds-button>
+</div>' />
 
 ## Disabled State
 

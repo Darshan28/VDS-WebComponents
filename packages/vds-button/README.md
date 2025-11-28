@@ -30,7 +30,7 @@ import { VDSButton } from '@vds/button';
 
 | Attribute | Type | Default | Description |
 |-----------|------|---------|-------------|
-| `variant` | `'primary' \| 'secondary' \| 'warning' \| 'danger' \| 'info'` | `'primary'` | Color intent |
+| `variant` | `'primary' \| 'secondary' \| 'warning' \| 'danger' \| 'info' \| 'inverse'` | `'primary'` | Color intent |
 | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | Button size |
 | `appearance` | `'filled' \| 'outline' \| 'text'` | `'filled'` | Surface treatment |
 | `shape` | `'rounded' \| 'pill' \| 'sharp'` | `'rounded'` | Corner radius preset |

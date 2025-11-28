@@ -1,7 +1,7 @@
 import { LitElement, html, css, nothing } from 'lit';
 import { customElement, property, query } from 'lit/decorators.js';
 
-export type ButtonVariant = 'primary' | 'secondary' | 'warning' | 'danger' | 'info';
+export type ButtonVariant = 'primary' | 'secondary' | 'warning' | 'danger' | 'info' | 'inverse';
 export type ButtonSize = 'sm' | 'md' | 'lg';
 export type ButtonAppearance = 'filled' | 'outline' | 'text';
 export type ButtonShape = 'rounded' | 'pill' | 'sharp';
@@ -117,6 +117,25 @@ export class VDSButton extends LitElement {
       --vds-btn-muted-bg-strong: var(--vds-color-blue-200, #c7d2fe);
     }
 
+    :host([variant='inverse']) {
+      --vds-btn-accent: var(--vds-color-text-inverse, var(--vds-color-white, #ffffff));
+      --vds-btn-accent-hover: rgba(255, 255, 255, 0.9);
+      --vds-btn-accent-active: rgba(255, 255, 255, 0.8);
+      --vds-btn-on-accent: var(--vds-color-text-inverse, var(--vds-color-white, #ffffff));
+      --vds-btn-border-color: rgba(255, 255, 255, 0.2);
+      --vds-btn-muted-bg: rgba(255, 255, 255, 0.1);
+      --vds-btn-muted-bg-strong: rgba(255, 255, 255, 0.15);
+      --vds-btn-disabled-bg: rgba(255, 255, 255, 0.05);
+      --vds-btn-disabled-color: rgba(255, 255, 255, 0.4);
+      --vds-btn-disabled-border: rgba(255, 255, 255, 0.1);
+    }
+
+    :host([variant='inverse'][appearance='filled']) {
+      --vds-btn-accent: rgba(255, 255, 255, 0.1);
+      --vds-btn-accent-hover: rgba(255, 255, 255, 0.15);
+      --vds-btn-accent-active: rgba(255, 255, 255, 0.2);
+    }
+
     button {
       display: inline-flex;
       align-items: center;
@@ -175,10 +194,14 @@ export class VDSButton extends LitElement {
       --vds-btn-label-color: var(--vds-btn-accent);
     }
 
+    :host([variant='secondary'][appearance='outline']) {
+      --vds-btn-label-color: var(--vds-color-text-primary, var(--vds-color-black, #070922));
+    }
+
     :host([appearance='outline']) button {
       background-color: transparent;
       border-color: var(--vds-btn-border-color, var(--vds-btn-accent));
-      color: var(--vds-btn-accent);
+      color: var(--vds-btn-label-color);
     }
 
     :host([appearance='outline']) button:hover:not(:disabled) {
@@ -193,10 +216,14 @@ export class VDSButton extends LitElement {
       --vds-btn-label-color: var(--vds-btn-accent);
     }
 
+    :host([variant='secondary'][appearance='text']) {
+      --vds-btn-label-color: var(--vds-color-text-primary, var(--vds-color-black, #070922));
+    }
+
     :host([appearance='text']) button {
       background-color: transparent;
       border-color: transparent;
-      color: var(--vds-btn-accent);
+      color: var(--vds-btn-label-color);
     }
 
     :host([appearance='text']) button:hover:not(:disabled) {
@@ -227,6 +254,15 @@ export class VDSButton extends LitElement {
 
     :host([icon-only]) button span[part="label"] {
       display: none;
+    }
+
+    /* Ensure icon-only secondary buttons use correct colors */
+    :host([variant='secondary'][icon-only][appearance='outline']) {
+      --vds-btn-label-color: var(--vds-color-text-primary, var(--vds-color-black, #070922));
+    }
+
+    :host([variant='secondary'][icon-only][appearance='text']) {
+      --vds-btn-label-color: var(--vds-color-text-primary, var(--vds-color-black, #070922));
     }
   `;
 
