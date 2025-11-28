@@ -19,7 +19,15 @@ The `vds-input` component is a comprehensive, customizable form input component 
 
 ### Email Input
 
+Email inputs include automatic validation. The input will show an error state if an invalid email is entered (validation occurs on blur by default).
+
 <ComponentDemo code='<vds-input label="Email address" type="email" placeholder="name@company.com" helper-text="We&apos;ll never share your email"></vds-input>' />
+
+### Email Input with Validation
+
+Try entering an invalid email address and blurring the field to see the validation in action:
+
+<ComponentDemo code='<vds-input label="Email address" type="email" placeholder="name@company.com"></vds-input>' />
 
 ### Password Input
 
@@ -41,33 +49,9 @@ Currency inputs include a prefix dropdown button (using `vds-dropdown-button`) f
 
 ### Relationship Input
 
-Relationship inputs (typically used for date selection) include navigation buttons for browsing through related records.
+Relationship inputs include navigation buttons for browsing through related records.
 
-<ComponentDemo code='<vds-input label="Label" type="relationship" placeholder="dd/mm/yyyy"></vds-input>' />
-
-### Date Input (Flatpickr)
-
-Setting `type="date"` enables an inline [Flatpickr](https://flatpickr.js.org/) calendar bundled with the component so users get a consistent picker experience across browsers (no CDN required).
-
-<ComponentDemo code='<vds-input label="Meeting date" type="date" helper-text="Select a date"></vds-input>' />
-
-### Time Input (Flatpickr)
-
-Setting `type="time"` enables a time picker using Flatpickr with 24-hour format.
-
-<ComponentDemo code='<vds-input label="Meeting time" type="time" helper-text="Select a time"></vds-input>' />
-
-### DateTime Input (Flatpickr)
-
-Setting `type="datetime"` enables a combined date and time picker using Flatpickr.
-
-<ComponentDemo code='<vds-input label="Meeting date & time" type="datetime" helper-text="Select date and time"></vds-input>' />
-
-### Date Range Input (Flatpickr)
-
-Setting `type="daterange"` enables a date range picker using Flatpickr, allowing users to select a start and end date.
-
-<ComponentDemo code='<vds-input label="Date range" type="daterange" helper-text="Select start and end dates"></vds-input>' />
+<ComponentDemo code='<vds-input label="Related Record" type="relationship" placeholder="Select a record"></vds-input>' />
 
 ## States
 
@@ -250,13 +234,15 @@ input.addEventListener('vds-input-nav', (e) => {
 
 | Property | Type | Default | Description |
 |----------|------|---------|-------------|
-| `type` | `'text' \| 'textarea' \| 'relationship' \| 'phone' \| 'currency'` | `'text'` | Input type |
+| `type` | `'text' \| 'textarea' \| 'relationship' \| 'phone' \| 'currency' \| 'email' \| 'password'` | `'text'` | Input type |
 | `state` | `'normal' \| 'read-only' \| 'disabled' \| 'error' \| 'active'` | `'normal'` | Input state |
 | `value` | `string` | `''` | Input value |
 | `placeholder` | `string` | `''` | Placeholder text |
 | `label` | `string` | `''` | Label text |
 | `helperText` | `string` | `''` | Helper text displayed below input |
 | `name` | `string` | `''` | Input name attribute |
+| `errorMessage` | `string` | `''` | Custom error message to display when validation fails |
+| `validateOnBlur` | `boolean` | `true` | Whether to validate email on blur (email type only) |
 | `id` | `string` | `''` | Input id attribute |
 | `disabled` | `boolean` | `false` | Whether the input is disabled |
 | `readonly` | `boolean` | `false` | Whether the input is read-only |

@@ -98,7 +98,7 @@ function renderPreview() {
     
     // Force upgrade of any custom elements
     // This ensures web components are properly initialized
-    const components = previewContainer.value.querySelectorAll('vds-button, vds-input, vds-modal, vds-dropdown-button, vds-dropdown-menu, vds-menu-item, vds-checkbox, vds-icon, vds-avatar, vds-badge');
+    const components = previewContainer.value.querySelectorAll('vds-button, vds-input, vds-modal, vds-dropdown-button, vds-dropdown-menu, vds-menu-item, vds-checkbox, vds-icon, vds-avatar, vds-badge, vds-date');
     components.forEach((el) => {
       // Check if element is already defined and upgrade it
       if (el.constructor === HTMLElement) {
@@ -118,6 +118,7 @@ function renderPreview() {
     
     // Wait for all custom elements to be defined and upgraded
     Promise.all([
+      customElements.whenDefined('vds-date').catch(() => Promise.resolve()),
       customElements.whenDefined('vds-dropdown-button').catch(() => Promise.resolve()),
       customElements.whenDefined('vds-dropdown-menu').catch(() => Promise.resolve()),
       customElements.whenDefined('vds-menu-item').catch(() => Promise.resolve()),

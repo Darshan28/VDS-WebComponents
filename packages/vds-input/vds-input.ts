@@ -1,8 +1,5 @@
 import { LitElement, html, css, nothing } from 'lit';
 import { customElement, property, query } from 'lit/decorators.js';
-import flatpickr from 'flatpickr';
-import type { Instance as FlatpickrInstance } from 'flatpickr/dist/types/instance';
-import 'flatpickr/dist/flatpickr.min.css';
 import '../vds-dropdown-button/vds-dropdown-button.js';
 import '../vds-icon/vds-icon.js';
 
@@ -13,11 +10,7 @@ export type InputType =
   | 'phone'
   | 'currency'
   | 'email'
-  | 'password'
-  | 'date'
-  | 'time'
-  | 'datetime'
-  | 'daterange';
+  | 'password';
 export type InputState = 'normal' | 'read-only' | 'disabled' | 'error' | 'active';
 
 export interface InputChangeEventDetail {
@@ -32,13 +25,13 @@ export interface InputInputEventDetail {
 
 /**
  * VDS Input Component
- *
+ * 
  * @element vds-input
- *
+ * 
  * @fires vds-input-change - Fired when the input value changes and loses focus
  * @fires vds-input-input - Fired on every input value change
  * @fires vds-input-nav - Fired when navigation buttons are clicked (relationship type)
- *
+ * 
  * @csspart wrapper - The wrapper container
  * @csspart label - The label element (contains the label text and info icon slot)
  * @csspart info-icon - The info icon slot
@@ -411,6 +404,7 @@ export class VDSInput extends LitElement {
     :host([state='error']) .helper-text {
       color: var(--vds-color-border-error, var(--vds-color-red-500, #fb3145));
     }
+
   `;
 
   @property({ type: String, reflect: true })
@@ -452,21 +446,19 @@ export class VDSInput extends LitElement {
   @property({ type: String })
   accessor ariaDescribedBy = '';
 
+  @property({ type: String, attribute: 'error-message' })
+  accessor errorMessage = '';
+
+  @property({ type: Boolean, attribute: 'validate-on-blur' })
+  accessor validateOnBlur = true;
+
   private showPassword = false;
-  private flatpickrInstance: FlatpickrInstance | null = null;
 
   @query('input, textarea')
   accessor inputElement!: HTMLInputElement | HTMLTextAreaElement;
 
   connectedCallback(): void {
     super.connectedCallback();
-    // Initialize Flatpickr after the component is connected to the DOM
-    if (this.type === 'date' || this.type === 'time' || this.type === 'datetime' || this.type === 'daterange') {
-      // Use requestAnimationFrame to ensure the DOM is ready
-      requestAnimationFrame(() => {
-        this.initDatePicker();
-      });
-    }
   }
 
   updated(changedProperties: Map<PropertyKey, unknown>): void {
@@ -499,24 +491,40 @@ export class VDSInput extends LitElement {
       this.requestUpdate();
     }
 
-    if (this.type === 'date' || this.type === 'time' || this.type === 'datetime' || this.type === 'daterange') {
-      this.initDatePicker();
-      if (changedProperties.has('value') && this.flatpickrInstance && this.value !== this.flatpickrInstance.input.value) {
-        this.flatpickrInstance.setDate(this.value, false);
+    // Re-validate email when value changes programmatically
+    if (changedProperties.has('value') && this.type === 'email' && this.validateOnBlur) {
+      // Only validate if there's a value and we're not in the middle of user input
+      if (this.value) {
+        this.validateEmail();
+      } else if (this.state === 'error') {
+        // Clear error state if value is cleared
+        this.state = 'normal';
+        if (this.errorMessage === 'Please enter a valid email address') {
+          this.errorMessage = '';
+        }
       }
-    } else {
-      this.destroyDatePicker();
     }
   }
 
   disconnectedCallback(): void {
-    this.destroyDatePicker();
     super.disconnectedCallback();
   }
 
   private handleInput(event: Event): void {
     const input = event.target as HTMLInputElement | HTMLTextAreaElement;
     this.value = input.value;
+
+    // Clear error state when user starts typing (for email validation)
+    if (this.type === 'email' && this.state === 'error' && this.value) {
+      // Re-validate as user types (optional - can be removed if you only want validation on blur)
+      // For now, we'll just clear the error state when user types
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (emailRegex.test(this.value)) {
+        this.state = 'normal';
+        this.errorMessage = '';
+      }
+    }
+    
     this.emitInputEvent(event);
   }
 
@@ -533,9 +541,67 @@ export class VDSInput extends LitElement {
   }
 
   private handleBlur(): void {
+    // Validate email on blur if enabled
+    if (this.validateOnBlur && this.type === 'email' && this.value) {
+      this.validateEmail();
+    }
+
+    // Only reset to normal if currently active (not error)
     if (this.state === 'active') {
       this.state = 'normal';
     }
+  }
+
+  /**
+   * Validates the email input value
+   * @returns true if valid, false if invalid
+   */
+  private validateEmail(): boolean {
+    if (this.type !== 'email') {
+      return true;
+    }
+
+    // Empty values are considered valid (use required attribute for required fields)
+    if (!this.value || this.value.trim() === '') {
+      if (this.state === 'error') {
+        this.state = 'normal';
+        this.errorMessage = '';
+      }
+      return true;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const isValid = emailRegex.test(this.value.trim());
+
+    if (!isValid) {
+      this.state = 'error';
+      if (!this.errorMessage) {
+        this.errorMessage = 'Please enter a valid email address';
+      }
+    } else {
+      // Clear error state if email is valid
+      if (this.state === 'error') {
+        this.state = 'normal';
+        // Only clear errorMessage if it was auto-generated (default message)
+        if (this.errorMessage === 'Please enter a valid email address') {
+          this.errorMessage = '';
+        }
+      }
+    }
+
+    return isValid;
+  }
+
+  /**
+   * Public method to validate the input
+   * @returns true if valid, false if invalid
+   */
+  public validate(): boolean {
+    if (this.type === 'email') {
+      return this.validateEmail();
+    }
+    // For other types, check if there's a custom error state
+    return this.state !== 'error';
   }
 
   private handleNavButtonClick(direction: 'prev' | 'next'): void {
@@ -592,13 +658,11 @@ export class VDSInput extends LitElement {
           ? 'tel'
           : this.type === 'email'
             ? 'email'
-            : this.type === 'password'
+              : this.type === 'password'
               ? this.showPassword
                 ? 'text'
                 : 'password'
-              : this.type === 'date' || this.type === 'time' || this.type === 'datetime' || this.type === 'daterange'
-                ? 'text'
-                : 'text';
+              : 'text';
 
     return html`
       <div class="wrapper" part="wrapper">
@@ -646,25 +710,25 @@ export class VDSInput extends LitElement {
                   ></textarea>
                 `
               : html`
-                  <input
-                    part="input"
-                    id=${inputId}
+        <input
+          part="input"
+          id=${inputId}
                     type=${nativeInputType}
-                    name=${this.name || nothing}
-                    .value=${this.value}
-                    placeholder=${this.placeholder || nothing}
+          name=${this.name || nothing}
+          .value=${this.value}
+          placeholder=${this.placeholder || nothing}
                     ?disabled=${this.disabled || this.state === 'disabled'}
                     ?readonly=${this.readonly || this.state === 'read-only'}
-                    aria-label=${this.ariaLabel || nothing}
+          aria-label=${this.ariaLabel || nothing}
                     aria-describedby=${this.ariaDescribedBy || (this.helperText ? `${inputId}-desc` : nothing)}
-                    @input=${this.handleInput}
-                    @change=${this.handleChange}
+          @input=${this.handleInput}
+          @change=${this.handleChange}
                     @focus=${this.handleFocus}
-                    @blur=${this.handleBlur}
-                  />
+          @blur=${this.handleBlur}
+        />
                 `}
             ${this.type === 'password'
-              ? html`
+          ? html`
                   <slot name="suffix-icon" part="suffix-icon"></slot>
                   <button
                     class="toggle-visibility"
@@ -681,7 +745,7 @@ export class VDSInput extends LitElement {
                   </button>
                 `
               : html`<slot name="suffix-icon" part="suffix-icon"></slot>`}
-          </div>
+              </div>
           ${hasNavButtons
             ? html`
                 <button
@@ -707,10 +771,10 @@ export class VDSInput extends LitElement {
               `
             : nothing}
         </div>
-        ${this.helperText
+        ${this.helperText || (this.state === 'error' && this.errorMessage)
           ? html`
               <div class="helper-text" part="helper-text" id=${`${inputId}-desc`}>
-                ${this.helperText}
+                ${this.state === 'error' && this.errorMessage ? this.errorMessage : this.helperText}
               </div>
             `
           : nothing}
@@ -726,83 +790,6 @@ export class VDSInput extends LitElement {
       input.focus();
     }
     this.requestUpdate();
-  }
-
-  private initDatePicker(): void {
-    const flatpickrTypes = ['date', 'time', 'datetime', 'daterange'];
-    if (!flatpickrTypes.includes(this.type) || typeof window === 'undefined') return;
-    
-    // Query the shadow DOM directly to ensure we get the element
-    // Flatpickr works with type="text" inputs
-    const input = this.shadowRoot?.querySelector('input[part="input"]') as HTMLInputElement | null;
-    if (!input) {
-      // If not found, try using the @query decorator as fallback
-      const fallbackInput = this.inputElement as HTMLInputElement | undefined;
-      if (!fallbackInput) return;
-      this.initializeFlatpickr(fallbackInput);
-      return;
-    }
-
-    this.initializeFlatpickr(input);
-  }
-
-  private initializeFlatpickr(input: HTMLInputElement): void {
-    // Don't reinitialize if already initialized on the same element
-    if (this.flatpickrInstance && this.flatpickrInstance.input === input) {
-      return;
-    }
-
-    // Change input type to text to avoid browser native picker conflicts
-    // Flatpickr will handle the picker UI
-    if (input.type === 'date' || input.type === 'time' || input.type === 'datetime-local') {
-      input.type = 'text';
-    }
-
-    this.flatpickrInstance?.destroy();
-
-    // Configure Flatpickr based on input type
-    const baseConfig: any = {
-      allowInput: true,
-      disableMobile: true,
-      defaultDate: this.value || undefined,
-      onChange: (_selectedDates: Date[], dateStr: string) => {
-        if (this.value === dateStr) return;
-        this.value = dateStr;
-        const syntheticEvent = new Event('change');
-        this.emitInputEvent(syntheticEvent);
-        this.emitChangeEvent(syntheticEvent);
-      }
-    };
-
-    switch (this.type) {
-      case 'date':
-        baseConfig.dateFormat = 'Y-m-d';
-        break;
-      case 'time':
-        baseConfig.enableTime = true;
-        baseConfig.noCalendar = true;
-        baseConfig.dateFormat = 'H:i';
-        baseConfig.time_24hr = true;
-        break;
-      case 'datetime':
-        baseConfig.enableTime = true;
-        baseConfig.dateFormat = 'Y-m-d H:i';
-        baseConfig.time_24hr = true;
-        break;
-      case 'daterange':
-        baseConfig.mode = 'range';
-        baseConfig.dateFormat = 'Y-m-d';
-        break;
-    }
-
-    this.flatpickrInstance = flatpickr(input, baseConfig);
-  }
-
-  private destroyDatePicker(): void {
-    if (this.flatpickrInstance) {
-      this.flatpickrInstance.destroy();
-      this.flatpickrInstance = null;
-    }
   }
 }
 

@@ -1,14 +1,14 @@
 {
-  "name": "@vds/input",
+  "name": "@vds/date",
   "version": "0.0.0-semantic-release",
-  "description": "VDS Input Web Component",
+  "description": "VDS Date/Time Picker Web Component",
   "type": "module",
-  "main": "./dist/vds-input.js",
-  "types": "./dist/vds-input.d.ts",
+  "main": "./dist/vds-date.js",
+  "types": "./dist/vds-date.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/vds-input.js",
-      "types": "./dist/vds-input.d.ts"
+      "import": "./dist/vds-date.js",
+      "types": "./dist/vds-date.d.ts"
     }
   },
   "files": [
@@ -21,8 +21,7 @@
   },
   "dependencies": {
     "lit": "^3.1.0",
-    "@vds/dropdown-button": "workspace:*",
-    "@vds/icon": "workspace:*"
+    "flatpickr": "^4.6.13"
   },
   "devDependencies": {
     "@open-wc/testing": "^3.1.7",
