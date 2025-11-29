@@ -35,10 +35,8 @@ export interface InputInputEventDetail {
  * @csspart wrapper - The wrapper container
  * @csspart label - The label element (contains the label text and info icon slot)
  * @csspart info-icon - The info icon slot
- * @csspart input-container - The outer input container (for active state border ring)
  * @csspart prefix-dropdown - The prefix dropdown button (for phone/currency)
- * @csspart input-wrapper - The inner input wrapper
- * @csspart input - The input/textarea element
+ * @csspart input - The input/textarea element container
  * @csspart suffix-icon - The suffix icon slot
  * @csspart nav-button-prev - The previous navigation button (for relationship)
  * @csspart nav-button-next - The next navigation button (for relationship)
@@ -72,6 +70,12 @@ export class VDSInput extends LitElement {
       width: 100%;
     }
 
+    .input-group {
+      display: flex;
+      align-items: stretch;
+      position: relative;
+    }
+
     .label {
       font-family: var(--vds-input-font-family);
       font-weight: var(--vds-input-font-weight);
@@ -101,19 +105,6 @@ export class VDSInput extends LitElement {
       color: var(--vds-color-text-disabled, #cdced3);
     }
 
-    /* Outer container for active state 3px border ring */
-    .input-container {
-      display: flex;
-      align-items: stretch;
-      position: relative;
-      border: 3px solid transparent;
-      border-radius: var(--vds-input-radius);
-      box-sizing: border-box;
-    }
-
-    :host([state='active']) .input-container {
-      border-color: var(--vds-color-green-100, #e6f9f3);
-    }
 
     /* Prefix dropdown button (for phone/currency) */
     .prefix-dropdown {
@@ -193,8 +184,8 @@ export class VDSInput extends LitElement {
       color: var(--vds-color-text-disabled, #cdced3);
     }
 
-    /* Inner input wrapper */
-    .input-wrapper {
+    /* Input container */
+    .input {
       display: flex;
       align-items: center;
       flex: 1;
@@ -207,50 +198,58 @@ export class VDSInput extends LitElement {
       gap: var(--vds-input-padding-x);
       padding: var(--vds-input-padding-y) var(--vds-input-padding-x);
       box-sizing: border-box;
+      box-shadow: none;
+      transition: border-color var(--vds-transition-base, 200ms ease-in-out),
+                  box-shadow var(--vds-transition-base, 200ms ease-in-out);
     }
 
-    /* Textarea specific height */
-    :host([type='textarea']) .input-wrapper {
-      height: var(--vds-input-textarea-height);
+    /* Textarea specific styling */
+    :host([type='textarea']) .input {
       min-height: var(--vds-input-textarea-height);
+      height: auto;
       align-items: flex-start;
-      padding-top: var(--vds-input-padding-y);
+      padding: 0;
+      gap: var(--vds-input-padding-x);
     }
 
-    /* Active state - inner border */
-    :host([state='active']) .input-wrapper {
+    /* Active state - box shadow instead of border */
+    :host([state='active']) .input {
       background-color: var(--vds-color-white, #ffffff);
       border-color: var(--vds-color-brand, var(--vds-color-green-500, #00b578));
+      box-shadow: 0 0 0 3px var(--vds-color-green-100, #e6f9f3);
     }
 
     /* Error state */
-    :host([state='error']) .input-wrapper {
+    :host([state='error']) .input {
       background-color: var(--vds-color-white, #ffffff);
       border-color: var(--vds-color-red-500, #fb3145);
+      box-shadow: none;
     }
 
     /* Read-only state */
-    :host([state='read-only']) .input-wrapper {
+    :host([state='read-only']) .input {
       background-color: var(--vds-color-gray-300, #eaeef4);
       border-color: var(--vds-color-gray-300, #eaeef4);
+      box-shadow: none;
     }
 
     /* Disabled state */
-    :host([state='disabled']) .input-wrapper {
+    :host([state='disabled']) .input {
       background-color: var(--vds-color-gray-200, #f8f9fb);
       border-color: var(--vds-color-gray-300, #eaeef4);
+      box-shadow: none;
     }
 
     /* For relationship type - no border radius on right */
-    :host([type='relationship']) .input-wrapper {
+    :host([type='relationship']) .input {
       border-top-right-radius: 0;
       border-bottom-right-radius: 0;
       margin-right: -1px;
     }
 
     /* For phone/currency - no border radius on left if prefix exists */
-    :host([type='phone']) .input-wrapper,
-    :host([type='currency']) .input-wrapper {
+    :host([type='phone']) .input,
+    :host([type='currency']) .input {
       border-top-left-radius: 0;
       border-bottom-left-radius: 0;
       margin-left: -1px;
@@ -273,9 +272,13 @@ export class VDSInput extends LitElement {
     }
 
     textarea {
-      resize: none;
+      resize: vertical;
       line-height: 1.5;
-      height: 100%;
+      min-height: var(--vds-input-textarea-height);
+      overflow-y: hidden;
+      padding: var(--vds-input-padding-y) var(--vds-input-padding-x);
+      width: 100%;
+      box-sizing: border-box;
     }
 
     input::placeholder,
@@ -453,12 +456,25 @@ export class VDSInput extends LitElement {
   accessor validateOnBlur = true;
 
   private showPassword = false;
+  private userResizedTextarea = false;
+  private lastManualHeight = 0;
 
   @query('input, textarea')
   accessor inputElement!: HTMLInputElement | HTMLTextAreaElement;
 
   connectedCallback(): void {
     super.connectedCallback();
+    // Auto-resize textarea on initial render
+    if (this.type === 'textarea') {
+      this.updateComplete.then(() => {
+        requestAnimationFrame(() => {
+          const textarea = this.inputElement as HTMLTextAreaElement | null;
+          if (textarea) {
+            this.autoResizeTextarea(textarea);
+          }
+        });
+      });
+    }
   }
 
   updated(changedProperties: Map<PropertyKey, unknown>): void {
@@ -491,6 +507,18 @@ export class VDSInput extends LitElement {
       this.requestUpdate();
     }
 
+    // Auto-resize textarea when value changes programmatically
+    if (changedProperties.has('value') && this.type === 'textarea') {
+      this.updateComplete.then(() => {
+        requestAnimationFrame(() => {
+          const textarea = this.inputElement as HTMLTextAreaElement | null;
+          if (textarea) {
+            this.autoResizeTextarea(textarea);
+          }
+        });
+      });
+    }
+
     // Re-validate email when value changes programmatically
     if (changedProperties.has('value') && this.type === 'email' && this.validateOnBlur) {
       // Only validate if there's a value and we're not in the middle of user input
@@ -513,6 +541,13 @@ export class VDSInput extends LitElement {
   private handleInput(event: Event): void {
     const input = event.target as HTMLInputElement | HTMLTextAreaElement;
     this.value = input.value;
+
+    // Auto-resize textarea - use requestAnimationFrame to ensure DOM is updated
+    if (this.type === 'textarea' && input instanceof HTMLTextAreaElement) {
+      requestAnimationFrame(() => {
+        this.autoResizeTextarea(input);
+      });
+    }
 
     // Clear error state when user starts typing (for email validation)
     if (this.type === 'email' && this.state === 'error' && this.value) {
@@ -604,6 +639,58 @@ export class VDSInput extends LitElement {
     return this.state !== 'error';
   }
 
+  /**
+   * Auto-resize textarea to fit content
+   * Only expands if content is larger, preserves user's manual resize
+   */
+  private autoResizeTextarea(textarea: HTMLTextAreaElement): void {
+    if (!textarea) return;
+    
+    // Store current scroll position
+    const scrollTop = textarea.scrollTop;
+    
+    // Reset height to get the correct scrollHeight
+    textarea.style.height = '0px';
+    
+    // Calculate required height based on content
+    const minHeight = parseFloat(getComputedStyle(textarea).getPropertyValue('--vds-input-textarea-height') || '60');
+    const contentHeight = Math.max(minHeight, textarea.scrollHeight);
+    
+    // If user has manually resized, only expand if content needs more space
+    // Otherwise, always fit to content
+    let newHeight: number;
+    if (this.userResizedTextarea && this.lastManualHeight > 0) {
+      // Only expand if content is taller than the manually set height
+      newHeight = Math.max(this.lastManualHeight, contentHeight);
+    } else {
+      // Auto-fit to content
+      newHeight = contentHeight;
+    }
+    
+    // Set height
+    textarea.style.height = `${newHeight}px`;
+    
+    // Restore scroll position
+    textarea.scrollTop = scrollTop;
+  }
+
+  /**
+   * Handle manual resize by user
+   */
+  private handleTextareaResize(event: Event): void {
+    if (this.type !== 'textarea') return;
+    
+    const textarea = event.target as HTMLTextAreaElement;
+    const currentHeight = textarea.offsetHeight;
+    const minHeight = parseFloat(getComputedStyle(textarea).getPropertyValue('--vds-input-textarea-height') || '60');
+    
+    // Only mark as user-resized if height is greater than minimum
+    if (currentHeight > minHeight) {
+      this.userResizedTextarea = true;
+      this.lastManualHeight = currentHeight;
+    }
+  }
+
   private handleNavButtonClick(direction: 'prev' | 'next'): void {
     if (this.disabled || this.state === 'disabled') return;
 
@@ -674,7 +761,7 @@ export class VDSInput extends LitElement {
               </label>
             `
           : nothing}
-        <div class="input-container" part="input-container">
+        <div class="input-group">
           ${hasPrefix
             ? html`
                 <vds-dropdown-button
@@ -690,11 +777,10 @@ export class VDSInput extends LitElement {
                 </vds-dropdown-button>
               `
             : nothing}
-          <div class="input-wrapper" part="input-wrapper">
+          <div class="input" part="input">
             ${isTextarea
               ? html`
                   <textarea
-                    part="input"
                     id=${inputId}
                     name=${this.name || nothing}
                     .value=${this.value}
@@ -707,11 +793,12 @@ export class VDSInput extends LitElement {
                     @change=${this.handleChange}
                     @focus=${this.handleFocus}
                     @blur=${this.handleBlur}
+                    @mouseup=${this.handleTextareaResize}
+                    @touchend=${this.handleTextareaResize}
                   ></textarea>
                 `
               : html`
         <input
-          part="input"
           id=${inputId}
                     type=${nativeInputType}
           name=${this.name || nothing}
