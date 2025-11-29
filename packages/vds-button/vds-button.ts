@@ -29,7 +29,7 @@ export class VDSButton extends LitElement {
     :host {
       display: inline-block;
       --vds-btn-font-family: var(--vds-font-family-sans, 'Nunito Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif);
-      --vds-btn-font-weight: var(--vds-font-weight-normal, 400);
+      --vds-btn-font-weight: var(--vds-font-weight-medium, 500);
       --vds-btn-font-size: var(--vds-font-size-md, 1rem);
       --vds-btn-padding-x: var(--vds-spacing-md, 1rem);
       --vds-btn-padding-y: var(--vds-spacing-sm, 0.5rem);
@@ -147,7 +147,6 @@ export class VDSButton extends LitElement {
       font-family: var(--vds-btn-font-family);
       font-weight: var(--vds-btn-font-weight);
       font-size: var(--vds-btn-font-size);
-      line-height: 1;
       letter-spacing: 0.01em;
       background-color: transparent;
       border: 1px solid transparent;
