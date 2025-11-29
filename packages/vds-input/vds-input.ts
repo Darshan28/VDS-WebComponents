@@ -80,7 +80,6 @@ export class VDSInput extends LitElement {
       font-family: var(--vds-input-font-family);
       font-weight: var(--vds-input-font-weight);
       font-size: var(--vds-input-label-font-size);
-      line-height: 1;
       color: var(--vds-color-text-secondary, #485775);
       white-space: nowrap;
       display: flex;
@@ -97,7 +96,6 @@ export class VDSInput extends LitElement {
       color: var(--vds-color-text-secondary, #485775);
       display: inline-flex;
       align-items: center;
-      line-height: 1;
       flex-shrink: 0;
     }
 
@@ -127,7 +125,6 @@ export class VDSInput extends LitElement {
 
     .prefix-dropdown::part(dropdown-button) {
       height: 100% !important;
-      line-height: 1 !important;
       padding: var(--vds-input-padding-y) var(--vds-input-padding-x) !important;
       border-top-left-radius: var(--vds-input-radius);
       border-bottom-left-radius: var(--vds-input-radius);
@@ -189,6 +186,7 @@ export class VDSInput extends LitElement {
       display: flex;
       align-items: center;
       flex: 1;
+      font-size: var(--vds-input-font-size);
       position: relative;
       background-color: var(--vds-color-white, #ffffff);
       border: 1px solid var(--vds-color-gray-300, #eaeef4);
@@ -262,7 +260,6 @@ export class VDSInput extends LitElement {
       font-family: var(--vds-input-font-family);
       font-weight: var(--vds-input-font-weight);
       font-size: var(--vds-input-font-size);
-      line-height: 1;
       color: var(--vds-color-text-primary, #070922);
       background: transparent;
       border: none;
@@ -273,7 +270,6 @@ export class VDSInput extends LitElement {
 
     textarea {
       resize: vertical;
-      line-height: 1.5;
       min-height: var(--vds-input-textarea-height);
       overflow-y: hidden;
       padding: var(--vds-input-padding-y) var(--vds-input-padding-x);
@@ -308,7 +304,6 @@ export class VDSInput extends LitElement {
       color: var(--vds-color-text-primary, #070922);
       display: inline-flex;
       align-items: center;
-      line-height: 1;
       flex-shrink: 0;
       height: 100%;
     }
@@ -365,7 +360,6 @@ export class VDSInput extends LitElement {
       color: var(--vds-color-text-primary, #070922);
       display: inline-flex;
       align-items: center;
-      line-height: 1;
     }
 
     :host([state='disabled']) .nav-button-icon {
@@ -392,14 +386,12 @@ export class VDSInput extends LitElement {
 
     .visibility-icon {
       font-size: var(--vds-input-icon-size);
-      line-height: 1;
     }
 
     .helper-text {
       font-family: var(--vds-input-font-family);
       font-weight: var(--vds-input-font-weight);
       font-size: var(--vds-input-helper-font-size);
-      line-height: 1;
       color: var(--vds-color-text-secondary, #485775);
       padding-top: var(--vds-input-gap);
     }

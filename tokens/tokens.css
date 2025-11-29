@@ -3,6 +3,8 @@
  * CSS Custom Properties with --vds- namespace
  */
 
+@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap');
+
 :root {
     /* Red */
     --vds-color-red-100: #FFECEE;
@@ -292,6 +294,7 @@
     --vds-size-4xl: 4rem;
 
   /* Typography */
+  
   --vds-font-family-sans: "Nunito Sans", -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   --vds-font-family-mono: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
 

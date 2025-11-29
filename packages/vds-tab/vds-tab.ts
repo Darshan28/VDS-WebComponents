@@ -43,7 +43,7 @@ export class VDSTab extends LitElement {
       display: flex;
       align-items: center;
       gap: var(--vds-tab-gap);
-      width: 100%;
+    //   width: 100%;
       position: relative;
     }
 
