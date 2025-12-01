@@ -89,6 +89,14 @@ function renderPreview() {
     const temp = document.createElement('div');
     temp.innerHTML = props.code;
     
+    // Extract and execute scripts separately (they won't execute via innerHTML)
+    const scripts = temp.querySelectorAll('script');
+    const scriptsToExecute: string[] = [];
+    scripts.forEach((script) => {
+      scriptsToExecute.push(script.textContent || '');
+      script.remove(); // Remove script from temp container
+    });
+    
     // Move all nodes to the preview container
     while (temp.firstChild) {
       const node = temp.firstChild;
@@ -98,7 +106,7 @@ function renderPreview() {
     
     // Force upgrade of any custom elements
     // This ensures web components are properly initialized
-    const components = previewContainer.value.querySelectorAll('vds-button, vds-input, vds-modal, vds-dropdown-button, vds-dropdown-menu, vds-menu, vds-menu-item, vds-checkbox, vds-icon, vds-avatar, vds-badge, vds-date, vds-tab, vds-tab-item');
+    const components = previewContainer.value.querySelectorAll('vds-button, vds-input, vds-modal, vds-dropdown-button, vds-dropdown-menu, vds-menu, vds-menu-item, vds-checkbox, vds-icon, vds-avatar, vds-badge, vds-date, vds-tab, vds-tab-item, vds-select');
     components.forEach((el) => {
       // Check if element is already defined and upgrade it
       if (el.constructor === HTMLElement) {
@@ -116,6 +124,58 @@ function renderPreview() {
       }
     });
     
+    // Execute scripts after extracting them
+    const executeScripts = () => {
+      if (scriptsToExecute.length > 0 && previewContainer.value) {
+        // Wait longer for components to initialize, especially vds-select which needs to initialize Choices.js
+        setTimeout(() => {
+          scriptsToExecute.forEach((scriptText) => {
+            try {
+              // Execute in a function that has access to previewContainer
+              // Replace document.querySelector/document.getElementById to scope to container
+              const container = previewContainer.value!;
+              
+              // Create a modified script that scopes queries to the container
+              let modifiedScript = scriptText;
+              
+              // Replace document.getElementById("#id") with container.querySelector("#id")
+              modifiedScript = modifiedScript.replace(
+                /document\.getElementById\(["']([^"']+)["']\)/g,
+                'container.querySelector("#$1")'
+              );
+              
+              // Replace document.querySelector("#id") or document.querySelector('#id')
+              modifiedScript = modifiedScript.replace(
+                /document\.querySelector\(["']#([^"']+)["']\)/g,
+                'container.querySelector("#$1")'
+              );
+              
+              // Replace document.querySelector with container.querySelector for other patterns
+              modifiedScript = modifiedScript.replace(
+                /document\.querySelector\(/g,
+                'container.querySelector('
+              );
+              
+              // For vds-select specifically, wait a bit more if setOptions is being called
+              if (modifiedScript.includes('setOptions')) {
+                // Wait for the component to be fully connected and initialized
+                setTimeout(() => {
+                  const func = new Function('container', modifiedScript);
+                  func(container);
+                }, 800); // Additional wait for Choices.js initialization
+              } else {
+                // Use Function constructor to create a safe execution context
+                const func = new Function('container', modifiedScript);
+                func(container);
+              }
+            } catch (error) {
+              console.error('[ComponentDemo] Error executing script:', error, scriptText);
+            }
+          });
+        }, 500); // Initial wait for components to be ready
+      }
+    };
+
     // Wait for all custom elements to be defined and upgraded
     Promise.all([
       customElements.whenDefined('vds-date').catch(() => Promise.resolve()),
@@ -125,8 +185,11 @@ function renderPreview() {
       customElements.whenDefined('vds-menu-item').catch(() => Promise.resolve()),
       customElements.whenDefined('vds-checkbox').catch(() => Promise.resolve()),
       customElements.whenDefined('vds-icon').catch(() => Promise.resolve()),
-      customElements.whenDefined('vds-avatar').catch(() => Promise.resolve())
+      customElements.whenDefined('vds-avatar').catch(() => Promise.resolve()),
+      customElements.whenDefined('vds-select').catch(() => Promise.resolve())
     ]).then(() => {
+      // Execute scripts after components are ready
+      executeScripts();
       // Force update all dropdown menus, menus, and menu items after they're upgraded
       requestAnimationFrame(() => {
         const dropdownMenus = previewContainer.value?.querySelectorAll('vds-dropdown-menu');

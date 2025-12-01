@@ -130,7 +130,7 @@ export class VDSAvatar extends LitElement {
       min-height: var(--vds-avatar-size);
       border-radius: var(--vds-avatar-radius);
       background-color: var(--vds-avatar-bg);
-      padding: var(--vds-avatar-padding);
+      // padding: var(--vds-avatar-padding);
       box-sizing: border-box;
       overflow: hidden;
       position: relative;

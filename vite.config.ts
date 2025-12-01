@@ -12,7 +12,7 @@ export default defineConfig(({ command, mode }) => {
       extensions: ['.mjs', '.js', '.mts', '.ts', '.jsx', '.tsx', '.json']
     },
     optimizeDeps: {
-      include: ['lit', 'lit/decorators.js', 'lit/directives/class-map.js']
+      include: ['lit', 'lit/decorators.js', 'lit/directives/class-map.js', 'choices.js']
     },
     esbuild: {
       target: 'es2020',

@@ -101,6 +101,22 @@
       <vds-input label="Label" type="currency" prefix-dropdown-text="$ Dollar" placeholder="Enter your amount"></vds-input>
     </section>
 
+    <section>
+      <h2>Select</h2>
+      <vds-select label="Choose an option" placeholder="Select...">
+        <select>
+          <option value="1">Option 1</option>
+          <option value="2">Option 2</option>
+          <option value="3">Option 3</option>
+        </select>
+      </vds-select>
+    </section>
+
+    <section>
+      <h2>Select with Avatars</h2>
+      <vds-select id="avatar-select" label="Select a person" placeholder="Choose a person" search-enabled style="max-width: 400px;"></vds-select>
+    </section>
+
     <vds-input label="Date" type="date" inline helper-text="Calendar is always visible"></vds-input>
 
 
@@ -132,6 +148,52 @@
         const modal = document.getElementById('demo-modal');
         if (modal) {
           modal.close();
+        }
+      });
+
+      // Avatar select example - wait for component to be defined
+      customElements.whenDefined('vds-select').then(() => {
+        const avatarSelect = document.getElementById('avatar-select');
+        if (avatarSelect) {
+          // Call setOptions immediately - no delay needed
+          avatarSelect.setOptions([
+              { 
+                value: "william", 
+                label: "William Howard",
+                avatar: "https://i.pravatar.cc/150?img=1"
+              },
+              { 
+                value: "zoye", 
+                label: "Zoye Lang",
+                avatar: "https://i.pravatar.cc/150?img=2"
+              },
+              { 
+                value: "will", 
+                label: "Will Reichert",
+                avatar: "https://i.pravatar.cc/150?img=3"
+              },
+              { 
+                value: "liam", 
+                label: "Liam Johnson",
+                avatar: "https://i.pravatar.cc/150?img=4",
+                selected: true
+              },
+              { 
+                value: "ketharena", 
+                label: "Ketharena Nilson",
+                avatar: "https://i.pravatar.cc/150?img=5"
+              },
+              { 
+                value: "emma", 
+                label: "Emma Adams",
+                avatar: "https://i.pravatar.cc/150?img=6"
+              },
+              { 
+                value: "oliver", 
+                label: "Oliver Scott",
+                avatar: "https://i.pravatar.cc/150?img=7"
+              }
+            ]);
         }
       });
     </script>

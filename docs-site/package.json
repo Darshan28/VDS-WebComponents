@@ -10,7 +10,8 @@
   },
   "devDependencies": {
     "vitepress": "^1.0.0",
-    "flatpickr": "^4.6.13"
+    "flatpickr": "^4.6.13",
+    "choices.js": "^10.2.0"
   }
 }
 
