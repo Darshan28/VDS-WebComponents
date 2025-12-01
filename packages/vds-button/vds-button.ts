@@ -134,6 +134,7 @@ export class VDSButton extends LitElement {
       --vds-btn-accent: rgba(255, 255, 255, 0.1);
       --vds-btn-accent-hover: rgba(255, 255, 255, 0.15);
       --vds-btn-accent-active: rgba(255, 255, 255, 0.2);
+      --vds-btn-border-color: transparent;
     }
 
     button {
@@ -181,12 +182,20 @@ export class VDSButton extends LitElement {
 
     :host([appearance='filled']) button:hover:not(:disabled) {
       background-color: var(--vds-btn-accent-hover);
-      border-color: var(--vds-btn-accent-hover);
+      border-color: var(--vds-btn-border-color-hover, var(--vds-btn-accent-hover));
+    }
+
+    :host([variant='inverse'][appearance='filled']) button:hover:not(:disabled) {
+      border-color: transparent;
     }
 
     :host([appearance='filled']) button:active:not(:disabled) {
       background-color: var(--vds-btn-accent-active);
       border-color: var(--vds-btn-accent-active);
+    }
+
+    :host([variant='inverse'][appearance='filled']) button:active:not(:disabled) {
+      border-color: transparent;
     }
 
     :host([appearance='outline']) {

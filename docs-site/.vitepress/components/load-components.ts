@@ -19,4 +19,5 @@ import '../../../packages/vds-tab/vds-tab.js';
 import '../../../packages/vds-menu/vds-menu.js';
 import '../../../packages/vds-tab-item/vds-tab-item.js';
 import '../../../packages/vds-select/vds-select.js';
+import '../../../packages/vds-navbar/vds-navbar.js';
 

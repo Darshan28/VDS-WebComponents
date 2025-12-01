@@ -4,10 +4,35 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>VDS Web Components - Demo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="./tokens/tokens.css" />
+    <link rel="stylesheet" href="./packages/vds-icon/assets/style.css" />
     <style>
+
+      /* Icon font face declaration - ensure fonts are loaded */
+      @font-face {
+        font-family: 'vds';
+        src: url('./packages/vds-icon/assets/fonts/vds.eot?zftt44');
+        src: url('./packages/vds-icon/assets/fonts/vds.eot?zftt44#iefix') format('embedded-opentype'),
+          url('./packages/vds-icon/assets/fonts/vds.ttf?zftt44') format('truetype'),
+          url('./packages/vds-icon/assets/fonts/vds.woff?zftt44') format('woff'),
+          url('./packages/vds-icon/assets/fonts/vds.svg?zftt44#vds') format('svg');
+        font-weight: normal;
+        font-style: normal;
+        font-display: block;
+      }
+
       body {
-        font-family: var(--vds-font-family-sans);
+        font-family: "Nunito Sans", sans-serif;
+        font-optical-sizing: auto;
+        margin: 0;
+        padding: 0;
+      }
+
+      
+      .content-wrapper {
         padding: var(--vds-spacing-xl);
         max-width: 1200px;
         margin: 0 auto;
@@ -25,6 +50,48 @@
     </style>
   </head>
   <body>
+    <vds-navbar variant="inverse">
+      <vds-tab slot="tabs" variant="filled-inverse">
+        <vds-tab-item value="home" active closable>Home</vds-tab-item>
+        <vds-tab-item value="components" closable>Components</vds-tab-item>
+        <vds-tab-item value="docs" closable>Documentation</vds-tab-item>
+        <vds-tab-item value="examples" closable>Examples</vds-tab-item>
+        <vds-tab-item value="tutorials" closable>Tutorials</vds-tab-item>
+        <vds-tab-item value="api" closable>API Reference</vds-tab-item>
+        <vds-tab-item value="changelog" closable>Changelog</vds-tab-item>
+        <vds-tab-item value="support" closable>Support</vds-tab-item>
+        <vds-tab-item value="community" closable>Community</vds-tab-item>
+      </vds-tab>
+      <div slot="actions" style="display: flex; gap: 6px; align-items: center;">
+        <vds-button class="search-button" size="sm" variant="inverse" appearance="filled">
+          <vds-icon slot="prefix-icon" name="magnifying-glass"></vds-icon>
+          Search
+          <span slot="suffix-icon" class="keyboard-shortcut">⌘K</span>
+        </vds-button>
+        <vds-button size="sm" variant="inverse" appearance="filled">
+          <vds-icon slot="prefix-icon" name="circle-plus"></vds-icon>
+          New
+        </vds-button>
+      </div>
+      <div slot="shortcuts" style="display: flex; gap: 0; align-items: center;">
+        <vds-button size="md" variant="inverse" appearance="text" icon-only aria-label="Grid">
+          <vds-icon slot="icon" name="grid-2-plus"></vds-icon>
+        </vds-button>
+        <vds-button size="md" variant="inverse" appearance="text" icon-only aria-label="Notifications">
+          <vds-icon slot="icon" name="bell"></vds-icon>
+        </vds-button>
+        <vds-button size="md" variant="inverse" appearance="text" icon-only aria-label="Inbox">
+          <vds-icon slot="icon" name="inbox"></vds-icon>
+        </vds-button>
+        <vds-button size="md" variant="inverse" appearance="text" icon-only aria-label="Tags">
+          <vds-icon slot="icon" name="tag"></vds-icon>
+        </vds-button>
+      </div>
+      <img slot="brand-logo" src="https://tinyurl.com/4kaxwvbc" alt="Brand Logo" style="height: 24px; width: auto;">
+      <vds-avatar slot="profile" variant="text" name="JD" size="md"></vds-avatar>
+    </vds-navbar>
+
+    <div class="content-wrapper">
     <h1>VDS Web Components Demo</h1>
 
 
@@ -197,6 +264,7 @@
         }
       });
     </script>
+    </div>
   </body>
 </html>
 
