@@ -123,6 +123,13 @@ const components = ref([
     description: 'Sticky navigation bar component with support for default and inverse variants',
     link: '/components/navbar',
     preview: '<vds-navbar variant="default" show-nav-heading><span slot="nav-heading">Application</span></vds-navbar>'
+  },
+  {
+    name: 'sidebar',
+    title: 'Sidebar',
+    description: 'Collapsible navigation sidebar with icon-only and icon+label modes',
+    link: '/components/sidebar',
+    preview: '<vds-sidebar style="height: 240px;"><vds-menu-item><vds-icon slot="prefix-icon" name="house"></vds-icon>Home</vds-menu-item><vds-menu-item><vds-icon slot="prefix-icon" name="gear"></vds-icon>Settings</vds-menu-item></vds-sidebar>'
   }
 ]);
 </script>

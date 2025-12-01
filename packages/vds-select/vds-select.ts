@@ -52,7 +52,6 @@ export class VDSSelect extends LitElement {
       --vds-select-padding-x: var(--vds-spacing-md, 12px);
       --vds-select-padding-y: var(--vds-spacing-sm, 6px);
       --vds-select-gap: var(--vds-spacing-sm, 3px);
-      // --vds-select-height: 28px;
       --vds-select-radius: var(--vds-radius-lg, 0.5rem);
       --vds-select-info-icon-size: 10.5px;
       --vds-select-bg: var(--vds-color-white, #ffffff);
@@ -108,7 +107,6 @@ export class VDSSelect extends LitElement {
 
     .select-container {
       position: relative;
-      min-height: var(--vds-select-height);
       width: 100%;
     }
 
@@ -141,8 +139,7 @@ export class VDSSelect extends LitElement {
       border: 1px solid var(--vds-color-gray-300, #eaeef4) !important;
       border-radius: var(--vds-select-radius) !important;
       padding: var(--vds-select-padding-y) var(--vds-select-padding-x) !important;
-      min-height: var(--vds-select-height) !important;
-      // height: var(--vds-select-height) !important;
+      min-height: unset !important; /* Remove any min-height */
       font-size: var(--vds-select-font-size) !important;
       font-family: var(--vds-select-font-family) !important;
       font-weight: var(--vds-select-font-weight) !important;
@@ -155,6 +152,7 @@ export class VDSSelect extends LitElement {
       cursor: pointer !important;
       visibility: visible !important;
       box-shadow: none !important;
+      line-height: 1 !important; /* Match input/button line-height for consistent height */
     }
 
     :host([state='active']) .choices__inner {
@@ -205,6 +203,11 @@ export class VDSSelect extends LitElement {
     .choices__input::placeholder {
       color: var(--vds-select-placeholder-color);
       opacity: 1;
+    }
+
+    /* Single select list - remove padding */
+    .choices__list--single {
+      padding: 0 !important;
     }
 
     /* Single select display */
@@ -1266,9 +1269,7 @@ export class VDSSelect extends LitElement {
         background-color: var(--vds-color-white, #ffffff) !important;
         border: 1px solid var(--vds-color-gray-300, #eaeef4) !important;
         border-radius: var(--vds-radius-lg, 0.375rem) !important;
-        // min-height: 28px !important;
-        // height: 28px !important;
-        // gap: var(--vds-spacing-md, 12px) !important;
+        min-height: unset !important; /* Remove any min-height */
         padding: var(--vds-spacing-sm, 6px) var(--vds-spacing-md, 12px) !important;
         padding-right: calc(var(--vds-spacing-md, 12px) + 24px) !important; /* Extra space for chevron */
         box-sizing: border-box !important;
@@ -1446,10 +1447,14 @@ export class VDSSelect extends LitElement {
         color: var(--vds-color-text-primary, #070922) !important;
       }
 
+      /* Single select list - remove padding */
+      .choices__list--single {
+        padding: 0 !important;
+      }
+
       /* Single select display text */
       .choices__list--single .choices__item {
         padding: 0 !important;
-        padding-right: 28px !important; /* Space for chevron */
         color: var(--vds-color-text-primary, #070922) !important;
         font-family: var(--vds-font-family-sans, 'Nunito Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif) !important;
         font-weight: var(--vds-font-weight-normal, 400) !important;
