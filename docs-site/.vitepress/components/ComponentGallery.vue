@@ -116,6 +116,13 @@ const components = ref([
     description: 'Customizable select component with single/multiple selection and search powered by Choices.js',
     link: '/components/select',
     preview: '<vds-select placeholder="Select..."><select><option value="1">Option 1</option><option value="2">Option 2</option></select></vds-select>'
+  },
+  {
+    name: 'navbar',
+    title: 'Navbar',
+    description: 'Sticky navigation bar component with support for default and inverse variants',
+    link: '/components/navbar',
+    preview: '<vds-navbar variant="default" show-nav-heading><span slot="nav-heading">Application</span></vds-navbar>'
   }
 ]);
 </script>

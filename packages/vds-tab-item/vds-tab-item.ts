@@ -1,6 +1,8 @@
 import { LitElement, html, css, nothing } from 'lit';
 import { customElement, property, state, query } from 'lit/decorators.js';
 import '../vds-icon/vds-icon.js';
+import '../vds-button/vds-button.js';
+import '../vds-button/vds-button.js';
 
 export type TabVariant = 'default' | 'filled' | 'filled-inverse' | 'rounded';
 export type TabSize = 'sm' | 'md' | 'lg';
@@ -39,7 +41,7 @@ export class VDSTabItem extends LitElement {
       --vds-tab-badge-bg: var(--vds-color-gray-200, #f8f9fb);
       --vds-tab-badge-color: var(--vds-color-text-secondary, #485775);
       --vds-tab-badge-radius: var(--vds-radius-sm, 0.1875rem);
-      --vds-tab-close-color: var(--vds-color-text-tertiary, #898f9a);
+      --vds-tab-close-color: var(--vds-color-text-secondary, #485775);
       --vds-tab-close-color-hover: var(--vds-color-text-primary, #070922);
       --vds-tab-close-bg: transparent;
       --vds-tab-min-height: 24px;
@@ -81,23 +83,37 @@ export class VDSTabItem extends LitElement {
       padding: var(--vds-tab-padding-y) var(--vds-tab-padding-x);
       cursor: pointer;
       position: relative;
-      line-height: 1;
+      line-height: normal;
       min-height: var(--vds-tab-min-height);
       box-sizing: border-box;
       transition: background-color 150ms ease, color 150ms ease;
       outline: none;
+      overflow: hidden;
+      max-width: 100%;
+      /* Min width: 4 characters of text + padding */
+      min-width: calc(var(--vds-tab-padding-x) * 2 + 4ch);
+    }
+    
+    /* When closable, add button space to min-width */
+    :host([closable]) .container {
+      min-width: calc(var(--vds-tab-padding-x) * 2 + 4ch + var(--vds-btn-min-height, 20px) + var(--vds-spacing-xs, 4px));
     }
 
     .container:focus-visible {
       box-shadow: 0 0 0 2px var(--vds-color-blue-200, rgba(67, 102, 255, 0.3));
     }
 
-    :host(:not([disabled]):hover) .container {
+    :host(:not([disabled]):not([active]):hover) .container {
       background-color: var(--vds-tab-bg-hover);
     }
 
     :host([active]) .container {
       color: var(--vds-tab-text-color-active);
+      background-color: var(--vds-tab-bg-active);
+    }
+
+    /* Active tabs should retain their background color on hover */
+    :host([active]:hover) .container {
       background-color: var(--vds-tab-bg-active);
     }
 
@@ -110,6 +126,8 @@ export class VDSTabItem extends LitElement {
       align-items: center;
       gap: var(--vds-tab-gap);
       min-width: 0;
+      flex: 1;
+      overflow: hidden;
     }
 
     .prefix[hidden],
@@ -120,10 +138,16 @@ export class VDSTabItem extends LitElement {
     .label {
       white-space: nowrap;
       overflow: hidden;
-      text-overflow: ellipsis;
+      text-overflow: clip;
       color: inherit;
       min-width: 0;
-      flex: 1;
+      flex: 1 1 0%;
+      max-width: 100%;
+    }
+    
+    /* When closable tab is hovered, reduce label max-width to account for close button */
+    :host([closable]:hover) .label {
+      max-width: calc(100% - var(--vds-btn-min-height, 20px) - var(--vds-spacing-xs, 4px));
     }
 
     .badge {
@@ -133,31 +157,95 @@ export class VDSTabItem extends LitElement {
       border-radius: var(--vds-tab-badge-radius);
       font-size: var(--vds-font-size-xs, 0.5625rem);
       font-weight: var(--vds-font-weight-normal, 400);
-      line-height: 1;
+      line-height: normal;
     }
 
     .close-button {
-      border: none;
-      background: var(--vds-tab-close-bg);
-      color: var(--vds-tab-close-color);
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0;
-      width: 15px;
-      height: 15px;
-      cursor: pointer;
-      border-radius: var(--vds-radius-sm, 0.25rem);
-      transition: color 150ms ease, background-color 150ms ease;
+      display: none;
+      position: absolute;
+      right: var(--vds-tab-padding-x, 8px);
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 10;
+      flex-shrink: 0;
     }
-
-    :host([size='sm']) .close-button {
-      width: 13px;
-      height: 13px;
+    
+    /* Show close button on hover or when tab is active */
+    :host(:hover) .close-button,
+    :host([active]) .close-button {
+      display: inline-block;
     }
-
-    .close-button:hover {
-      color: var(--vds-tab-close-color-hover);
+    
+    /* Style vds-button - use inverse variant's built-in styling */
+    .close-button {
+      /* Inverse variant will handle hover colors automatically */
+    }
+    
+    /* Set close button icon color to match tab text color for better visibility */
+    .close-button vds-icon {
+      --vds-icon-color: var(--vds-tab-text-color, var(--vds-color-text-secondary, #485775));
+      color: var(--vds-icon-color);
+    }
+    
+    /* Override button's label color to match icon - important for active tabs */
+    .close-button {
+      --vds-btn-label-color: var(--vds-tab-text-color, var(--vds-color-text-secondary, #485775));
+    }
+    
+    /* Active tabs - use active text color for close button */
+    :host([active]) .close-button {
+      --vds-btn-label-color: var(--vds-tab-text-color-active, var(--vds-color-text-primary, #070922)) !important;
+      --vds-btn-accent: var(--vds-tab-text-color-active, var(--vds-color-text-primary, #070922)) !important;
+    }
+    
+    :host([active]) .close-button[icon-only]::part(button) {
+      background-color: var(--vds-tab-bg-active, transparent) !important;
+      color: var(--vds-tab-text-color-active, var(--vds-color-text-primary, #070922)) !important;
+    }
+    
+    :host([active]) .close-button vds-icon {
+      --vds-icon-color: var(--vds-tab-text-color-active, var(--vds-color-text-primary, #070922)) !important;
+      color: var(--vds-icon-color) !important;
+    }
+    
+    /* For filled-inverse variant - use white/light color */
+    :host([variant='filled-inverse']) .close-button {
+      --vds-btn-label-color: var(--vds-tab-close-color, rgba(255, 255, 255, 0.9)) !important;
+      --vds-btn-accent: var(--vds-tab-close-color, rgba(255, 255, 255, 0.9)) !important;
+    }
+    
+    :host([variant='filled-inverse']) .close-button vds-icon {
+      --vds-icon-color: var(--vds-tab-close-color, rgba(255, 255, 255, 0.9)) !important;
+      color: var(--vds-icon-color) !important;
+    }
+    
+    /* Active filled-inverse tabs have white background, so use dark color for contrast */
+    :host([variant='filled-inverse'][active]) .close-button {
+      --vds-btn-label-color: var(--vds-tab-text-color-active, var(--vds-color-text-primary, #070922)) !important;
+      --vds-btn-accent: var(--vds-tab-text-color-active, var(--vds-color-text-primary, #070922)) !important;
+    }
+    
+    /* Ensure button background matches tab's active background */
+    :host([variant='filled-inverse'][active]) .close-button[icon-only]::part(button) {
+      background-color: var(--vds-tab-bg-active, var(--vds-color-white, #ffffff)) !important;
+      color: var(--vds-tab-text-color-active, var(--vds-color-text-primary, #070922)) !important;
+    }
+    
+    :host([variant='filled-inverse'][active]) .close-button vds-icon {
+      --vds-icon-color: var(--vds-tab-text-color-active, var(--vds-color-text-primary, #070922)) !important;
+      color: var(--vds-icon-color) !important;
+    }
+    
+    
+    /* Hover state for close button icon */
+    :host(:hover) .close-button vds-icon {
+      --vds-icon-color: var(--vds-tab-close-color-hover, var(--vds-color-text-primary, #070922));
+      color: var(--vds-icon-color) !important;
+    }
+    
+    :host([variant='filled-inverse']:hover) .close-button vds-icon {
+      --vds-icon-color: var(--vds-tab-close-color-hover, var(--vds-color-white, #ffffff));
+      color: var(--vds-icon-color) !important;
     }
 
     .indicator {
@@ -217,7 +305,7 @@ export class VDSTabItem extends LitElement {
       --vds-tab-text-color-active: var(--vds-color-text-primary, #070922);
       --vds-tab-badge-bg: var(--vds-color-white, #ffffff);
       --vds-tab-badge-color: var(--vds-color-text-tertiary, #898f9a);
-      --vds-tab-close-color: rgba(255, 255, 255, 0.85);
+      --vds-tab-close-color: rgba(255, 255, 255, 0.9);
       --vds-tab-close-color-hover: var(--vds-color-white, #ffffff);
     }
 
@@ -246,7 +334,13 @@ export class VDSTabItem extends LitElement {
       --vds-tab-bg-active: var(--vds-color-bg-default, var(--vds-color-white, #ffffff));
     }
 
-    :host([variant='rounded']:not([disabled]):hover) {
+    /* Rounded variant active tabs should retain background on hover */
+    :host([variant='rounded'][active]:hover) {
+      --vds-tab-bg: var(--vds-color-bg-default, var(--vds-color-white, #ffffff));
+      --vds-tab-bg-active: var(--vds-color-bg-default, var(--vds-color-white, #ffffff));
+    }
+
+    :host([variant='rounded']:not([disabled]):not([active]):hover) {
       --vds-tab-bg: transparent;
     }
   `;
@@ -294,6 +388,16 @@ export class VDSTabItem extends LitElement {
     this.updateSlotState();
   }
 
+  protected updated(changedProperties: Map<PropertyKey, unknown>): void {
+    super.updated(changedProperties);
+    
+    // Ensure styles are recalculated when active state changes
+    if (changedProperties.has('active')) {
+      // Force a reflow to ensure CSS custom properties are applied
+      void this.offsetHeight;
+    }
+  }
+
   private updateSlotState(): void {
     this.hasPrefixIcon = this.slotHasContent(this.prefixSlot);
     this.hasBadgeSlot = this.slotHasContent(this.badgeSlot);
@@ -336,13 +440,14 @@ export class VDSTabItem extends LitElement {
     }
   }
 
-  private handleClose(event: Event): void {
+  private handleClose(event: CustomEvent): void {
     event.stopPropagation();
+    const originalEvent = event.detail?.originalEvent || event;
     this.dispatchEvent(
       new CustomEvent<TabCloseEventDetail>('vds-tab-item-close', {
         detail: {
           value: this.value || undefined,
-          originalEvent: event
+          originalEvent: originalEvent
         },
         bubbles: true,
         composed: true
@@ -402,15 +507,18 @@ export class VDSTabItem extends LitElement {
               `}
           ${this.closable
             ? html`
-                <button
+                <vds-button
                   class="close-button"
                   part="close-button"
-                  type="button"
+                  icon-only
+                  size="sm"
+                  variant="inverse"
+                  appearance="text"
                   aria-label=${this.closeLabel}
-                  @click=${this.handleClose}
+                  @vds-button-click=${this.handleClose}
                 >
-                  <vds-icon name="close" aria-hidden="true"></vds-icon>
-                </button>
+                  <vds-icon slot="icon" name="xmark" aria-hidden="true"></vds-icon>
+                </vds-button>
               `
             : nothing}
         </div>

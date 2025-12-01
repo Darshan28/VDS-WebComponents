@@ -45,6 +45,7 @@ export class VDSTab extends LitElement {
       gap: var(--vds-tab-gap);
     //   width: 100%;
       position: relative;
+      height: 100%;
     }
 
     :host([variant='default']) .container {
@@ -60,7 +61,7 @@ export class VDSTab extends LitElement {
     :host([variant='filled-inverse']) .container {
       background-color: var(--vds-tab-bg-filled-inverse);
       border-radius: var(--vds-radius-md, 0.375rem);
-      padding: var(--vds-spacing-2xs, 0.09375rem);
+      // padding: var(--vds-spacing-2xs, 0.09375rem);
     }
 
     :host([variant='rounded']) .container {
@@ -326,7 +327,14 @@ export class VDSTab extends LitElement {
     items.forEach((item) => {
       const tabItem = item as any;
       const isActive = tabItem.value === targetValue || (!targetValue && tabItem.active);
+      const previousActive = tabItem.active;
       tabItem.active = isActive;
+      
+      // Force update if the active state changed
+      if (previousActive !== isActive) {
+        tabItem.requestUpdate();
+      }
+      
       if (isActive && tabItem.value) {
         this.activeValue = tabItem.value;
       }

@@ -13,4 +13,5 @@ import './packages/vds-menu-item/vds-menu-item.js';
 import './packages/vds-icon/vds-icon.js';
 import './packages/vds-avatar/vds-avatar.js'; // Required for avatar select example
 import './packages/vds-select/vds-select.js';
+import './packages/vds-navbar/vds-navbar.js';
 
