@@ -109,6 +109,13 @@ const components = ref([
     description: 'Dropdown button component with split and regular styles',
     link: '/components/dropdown-button',
     preview: '<vds-dropdown-button>Action</vds-dropdown-button>'
+  },
+  {
+    name: 'select',
+    title: 'Select',
+    description: 'Customizable select component with single/multiple selection and search powered by Choices.js',
+    link: '/components/select',
+    preview: '<vds-select placeholder="Select..."><select><option value="1">Option 1</option><option value="2">Option 2</option></select></vds-select>'
   }
 ]);
 </script>

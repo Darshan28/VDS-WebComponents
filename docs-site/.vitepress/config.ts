@@ -22,7 +22,7 @@ export default defineConfig({
       extensions: ['.mjs', '.js', '.mts', '.ts', '.jsx', '.tsx', '.json']
     },
     optimizeDeps: {
-      include: ['lit', 'lit/decorators.js', 'lit/directives/class-map.js', 'flatpickr']
+      include: ['lit', 'lit/decorators.js', 'lit/directives/class-map.js', 'flatpickr', 'choices.js']
     },
     esbuild: {
       target: 'es2022',
@@ -55,6 +55,7 @@ export default defineConfig({
             { text: 'Checkbox', link: '/components/checkbox' },
             { text: 'Date', link: '/components/date' },
             { text: 'Input', link: '/components/input' },
+            { text: 'Select', link: '/components/select' },
             { text: 'Tab', link: '/components/tab' },
             { text: 'Tab Item', link: '/components/tab-item' },
             { text: 'Menu Item', link: '/components/menu-item' },
