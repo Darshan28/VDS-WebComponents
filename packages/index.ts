@@ -16,6 +16,7 @@ export { VDSMenu } from './vds-menu/vds-menu.js';
 export { VDSMenuItem } from './vds-menu-item/vds-menu-item.js';
 export { VDSModal } from './vds-modal/vds-modal.js';
 export { VDSNavbar } from './vds-navbar/vds-navbar.js';
+export { VDSSidebar } from './vds-sidebar/vds-sidebar.js';
 export { VDSTab } from './vds-tab/vds-tab.js';
 export { VDSTabItem } from './vds-tab-item/vds-tab-item.js';
 
@@ -30,6 +31,7 @@ export type { InputType, InputChangeEventDetail, InputInputEventDetail } from '.
 export type { MenuItemState } from './vds-menu-item/vds-menu-item.js';
 export type { ModalCloseEventDetail } from './vds-modal/vds-modal.js';
 export type { NavbarVariant } from './vds-navbar/vds-navbar.js';
+export type { SidebarVariant } from './vds-sidebar/vds-sidebar.js';
 export type { TabChangeEventDetail } from './vds-tab/vds-tab.js';
 export type { TabVariant, TabSize, TabSelectEventDetail, TabCloseEventDetail } from './vds-tab-item/vds-tab-item.js';
 

@@ -62,7 +62,8 @@ export default defineConfig({
             { text: 'Dropdown Button', link: '/components/dropdown-button' },
             { text: 'Dropdown Menu', link: '/components/dropdown-menu' },
             { text: 'Modal', link: '/components/modal' },
-            { text: 'Navbar', link: '/components/navbar' }
+            { text: 'Navbar', link: '/components/navbar' },
+            { text: 'Sidebar', link: '/components/sidebar' }
           ]
         }
       ]

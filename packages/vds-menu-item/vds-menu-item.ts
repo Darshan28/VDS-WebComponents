@@ -79,7 +79,6 @@ export class VDSMenuItem extends LitElement {
       font-weight: var(--vds-menu-item-font-weight);
       font-size: var(--vds-menu-item-font-size);
       color: var(--vds-menu-item-text-color);
-      line-height: 1;
       white-space: nowrap;
       flex: 1;
       min-width: 0;
@@ -101,6 +100,34 @@ export class VDSMenuItem extends LitElement {
       align-items: center;
       gap: var(--vds-menu-item-gap);
       flex-shrink: 0;
+    }
+
+    /* Sidebar-collapsed mode: show only icon (no label or suffix content),
+       but keep prefix alignment stable to avoid icon jumping horizontally. */
+    .menu-item-text {
+      transition: opacity 300ms ease-in-out, visibility 300ms ease-in-out;
+    }
+
+    .menu-item-suffix {
+      transition: opacity 300ms ease-in-out, visibility 300ms ease-in-out;
+    }
+
+    :host([sidebar-collapsed]) .menu-item-text {
+      opacity: 0;
+      visibility: hidden;
+      display: block; /* Keep display: block for smooth transition */
+    }
+
+    :host([sidebar-collapsed]) .menu-item-suffix {
+      opacity: 0;
+      visibility: hidden;
+      display: flex; /* Keep display: flex for smooth transition */
+    }
+
+    /* Remove gap in prefix when collapsed to eliminate extra spacing next to icon */
+    :host([sidebar-collapsed]) .menu-item-prefix {
+      gap: 0;
+      transition: gap 300ms ease-in-out;
     }
 
     /* Checkbox styles */
